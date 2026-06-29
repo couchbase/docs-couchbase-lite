@@ -1,4 +1,3 @@
-
 = Databases
 :page-aliases: clang:database.adoc
 :page-role:
@@ -172,20 +171,29 @@ or current working directory
 See also xref:c:database.adoc#lbl-find-db-loc[].
 --
 
-[#ex-dbopen]
 .Open or create a database
-
-
 [#ex-dbopen]
 ====
-
-
+[{tabs}]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="new-database", indent=0]
 ----
+--
 
-
+C++::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=new-database,indent=0]
+----
+--
+=====
 ====
 
 
@@ -195,33 +203,41 @@ include::c:example$code_snippets/main.cpp[tags="new-database", indent=0]
 You are advised to incorporate the closing of all open databases into your application workflow.
 
 To close a database, use {url-api-references-classes}database.html#ga4d448b2d6809d6f9633d810d3ac6dcfa[CBLDatabase_Close()] -- see: xref:c:database.adoc#ex-dbclose[].
-This also closes
-active replications, listeners and-or live queries connected to the database.
+This also closes active replications, listeners and-or live queries connected to the database.
 
 NOTE: Closing a database soon after starting a replication involving it can cause an exception as the asynchronous `replicator (start)` may not yet be `connected`.
 
 
 .Close a Database
 [#ex-dbclose]
-
-
-[#ex-dbclose]
 ====
-
-
+[{tabs}]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="close-database", indent=0]
 ----
+--
 
-
+C++::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=close-database,indent=0]
+----
+--
+=====
 ====
 
 
 [#database-full-sync]
 == Database Full Sync
 
-Database Full Sync will prevent the loss of transactional data due to an unexpected system crash or loss of power.
+Database Full Sync prevents the loss of transactional data due to an unexpected system crash or loss of power.
 This feature is not enabled by default and must be manually set in your database configuration.
 
 
@@ -229,22 +245,31 @@ CAUTION: Database Full Sync is a safe method to prevent data loss but will incur
 
 .Enable Database Full Sync
 [#ex-dbfullsync]
-
-
-[#ex-dbfullsync]
 ====
-
-
+[{tabs}]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="database-fullsync", indent=0]
 ----
+--
 
-
+C++::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=database-fullsync,indent=0]
+----
+--
+=====
 ====
 
 
-NOTE: It is not possible to change the configuration of a Database after instantiating the Database with the configuration by updating its `DatabaseConfiguration` property.
+NOTE: It's' not possible to change the configuration of a Database after instantiating the Database with the configuration by updating its `DatabaseConfiguration` property.
 
 [#database-encryption]
 == Database Encryption
@@ -264,18 +289,27 @@ Provide this encryption key every time the database is opened -- see xref:c:data
 
 .Configure Database Encryption
 [#ex-sdb-encrypt]
-
-
-[#ex-sdb-encrypt]
 ====
-
-
+[{tabs}]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="database-encryption", indent=0]
 ----
+--
 
-
+C++::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=database-encryption,indent=0]
+----
+--
+=====
 ====
 
 

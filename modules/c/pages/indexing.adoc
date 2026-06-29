@@ -1,12 +1,9 @@
-
 = Indexing your Data
 :page-role:
 :description: Couchbase Lite database data model concepts - indexes
 
+:source-language: c, c++
 
-:source-language: c
-
-:source-language: c
 :url-api-references-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__
 
 
@@ -66,19 +63,29 @@ xref:c:indexing.adoc#ex-create-index[] creates a new index for the `type` and `n
 The code to create the index will look something like this:
 
 .Create index
-[#ex-create-index]
-
 
 [#ex-create-index]
 ====
-
-
+[{tabs}]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="query-index", indent=0]
 ----
+--
 
-
+C++::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tag=query-index,indent=0]
+----
+--
+=====
 ====
 
 
@@ -90,9 +97,9 @@ The Partial Index can create a smaller index, potentially improving index and qu
 You can use Partial Index to specify a `WHERE` clause in your index configuration.
 If a where clause is specified, the database will index a document only when the where clause condition is met.
 
-Couchbase's query optimizer uses https://www.sqlite.org/partialindex.html[SQLite's Partial Index rules about queries using Partial Indexes] to determine whether to use partial index in the query or not.
+Couchbase's' query optimizer uses https://www.sqlite.org/partialindex.html[SQLite's Partial Index rules about queries using Partial Indexes] to determine whether to use partial index in the query or not.
 
-.Couchbase and SQLite's Partial Index Rules
+.Couchbase and SQLite's' Partial Index Rules
 ====
 In general, Couchbase Lite follows the two rules, with a modification to the second rule.
 
@@ -136,11 +143,26 @@ SELECT * FROM col1 WHERE b=456;  -- cannot use partial index
 Partial Value Index is a form of Partial Index in which a value is used in the `WHERE` clause and the query is selected by the query optimizer.
 
 
+[{tabs}]
+====
+C::
++
+--
 [source.no-callouts, c, indent=0]
 ----
 include::c:example$code_snippets/main.cpp[tags=partial-value-index]
 ----
+--
 
+C++::
++
+--
+[source.no-callouts, cpp, indent=0]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tag=partial-value-index]
+----
+--
+====
 
 [#partial-full-text-index]
 === Partial Full-Text Index
@@ -151,29 +173,60 @@ This means that a Partial Full-Text Index will always be used when the `match()`
 For details, see xref:c:fts.adoc[].
 
 
+[{tabs}]
+====
+C::
++
+--
 [source.no-callouts, c, indent=0]
 ----
 include::c:example$code_snippets/main.cpp[tags=partial-full-text-index]
 ----
+--
+
+C++::
++
+--
+[source.no-callouts, cpp, indent=0]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tag=partial-full-text-index]
+----
+--
+====
 
 [#array-indexing]
 == Array Indexing
 
 Couchbase Lite 3.2.1 introduces functionality to optimize querying arrays.
-xref:c:query-n1ql-mobile.adoc#lbl-unnest[Array `UNNEST`] to unpack arrays within a document to allow joins with the parent object, and array indexes for indexing unnested array's values to allow more efficient queries with `UNNEST`.
+xref:c:query-n1ql-mobile.adoc#lbl-unnest[Array `UNNEST`] to unpack arrays within a document to allow joins with the parent object, and array indexes for indexing unnested array's' values to allow more efficient queries with `UNNEST`.
 
 [#the-array-index]
 === The Array Index
 
-An array index is a new type of the index for indexing nested array's properties to allow querying with the `UNNEST` more efficiently.
+An array index is a new type of the index for indexing nested array's' properties to allow querying with the `UNNEST` more efficiently.
 
 Below is an example array index configuration:
 
-
+[{tabs}]
+====
+C::
++
+--
 [source.no-callouts, c, indent=0]
 ----
 include::c:example$code_snippets/main.cpp[tags=array-index-config]
 ----
+--
+
+C++::
++
+--
+[source.no-callouts, cpp, indent=0]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tag=array-index-config]
+----
+--
+====
 
 
 [#array-index-syntax]
@@ -250,10 +303,26 @@ The query above produces the following output from the document:
 You can also perform the same operation using array indexes like so:
 
 
+[{tabs}]
+====
+C::
++
+--
 [source.no-callouts, c, indent=0]
 ----
 include::c:example$code_snippets/main.cpp[tags=array-index-single]
 ----
+--
+
+C++::
++
+--
+[source.no-callouts, cpp, indent=0]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tag=array-index-single]
+----
+--
+====
 
 
 You can perform similar operations on nested arrays:
@@ -280,10 +349,26 @@ The output demonstrates retrieval of both primary and secondary contact numbers 
 Here's an example of creating an array index on a nested array containing dictionary values:
 
 
+[{tabs}]
+====
+C::
++
+--
 [source.no-callouts, c, indent=0]
 ----
 include::c:example$code_snippets/main.cpp[tags=array-index-nested]
 ----
+--
+
+C++::
++
+--
+[source.no-callouts, cpp, indent=0]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tag=array-index-nested]
+----
+--
+====
 
 
 The above snippet creates an array index to allow you to iterate through `contacts[].phones[].type` in the document, namely `"home"` and `"mobile"`.
