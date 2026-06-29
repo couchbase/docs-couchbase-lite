@@ -1,13 +1,11 @@
-
 = Data Sync using Sync Gateway
 :page-aliases: clang:replication.adoc
 :page-role:
 :description: Couchbase Lite for C -- Synchronizing data changes between local and remote databases using Sync Gateway
 
 
-:source-language: c
+:source-language: c, c++
 
-:source-language: c
 :url-api-references-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__
 
 
@@ -220,24 +218,35 @@ The constructor provides:
 * the server's URL (including the port number and the name of the remote database to sync with)
 +
 --
-It is expected that the app will identify the IP address and URL and append the remote database name to the URL endpoint, producing for example: `wss://10.0.2.2:4984/travel-sample`
+It's expected that the app will identify the IP address and URL and append the remote database name to the URL endpoint, producing for example: `wss://10.0.2.2:4984/travel-sample`
 
 The URL scheme for web socket URLs uses `ws:` (non-TLS) or `wss:` (SSL/TLS) prefixes.
 --
 
 // Example 2
 .Add Target to Configuration
-
-
+[#ex-cfg-tgt]
 ====
-
-
+[{tabs}]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="sgw-act-rep-initialize", indent=0]
 ----
+--
 
-
+C++::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=sgw-act-rep-initialize,indent=0]
+----
+--
+=====
 ====
 
 <.> Note use of the scheme prefix (`wss://`
@@ -268,18 +277,28 @@ We use `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}
 // Example 3
 [#ex-repl-sync]
 .Configure replicator type and mode
-
-
 [#ex-repl-sync]
 ====
-
-
+[{tabs}]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="p2p-act-rep-config-type;p2p-act-rep-config-cont", indent=0]
 ----
+--
 
-
+C++::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=p2p-act-rep-config-type;p2p-act-rep-config-cont,indent=0]
+----
+--
+=====
 ====
 
 
@@ -348,18 +367,27 @@ When necessary you can adjust any or all of those configurable values -- see: xr
 
 .Configuring Replication Retries
 [#ex-repl-retry]
-
-
-[#ex-repl-retry]
 ====
-
-
+[{tabs}]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="replication-retry-config", indent=0]
 ----
+--
 
-
+C++::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=replication-retry-config,indent=0]
+----
+--
+=====
 ====
 
 <.> Here we use {url-api-prop-replicator-config-setHeartbeat} to set the required interval (in seconds) between the heartbeat pulses
@@ -752,22 +780,33 @@ xref:c:replication.adoc#lbl-repl-start[]  | xref:c:replication.adoc#lbl-repl-ckp
 [#lbl-repl-start]
 === Start Replicator
 
-Use the `{url-api-references-classes}replication.html[Replication]` class's {url-api-references-classes}replication.html#(im)initWithConfig:[initWith(config:)] constructor, to initialize the replicator with the configuration you have defined.
+Use the `{url-api-references-classes}replication.html[Replication]` class's' {url-api-references-classes}replication.html#(im)initWithConfig:[initWith(config:)] constructor, to initialize the replicator with the configuration you have defined.
 You can, optionally, add a change listener (see xref:c:replication.adoc#lbl-repl-mon[]) before starting the replicator running using {url-api-references-classes}replication.html#ga224926daa794a424c470bf86dd57aaf9[CBLReplicator_Start()].
 
 // Example 7
 .Initialize and run replicator
-
-
+[#ex-init-repl]
 ====
-
-
+[{tabs}]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="p2p-act-rep-start-full;!p2p-act-rep-add-change-listener", indent=0]
 ----
+--
 
-
+C++::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=p2p-act-rep-start-full,indent=0]
+----
+--
+=====
 ====
 
 <.> Initialize the replicator with the configuration
@@ -933,7 +972,7 @@ Stop the listener as shown in xref:c:replication.adoc#ex-stop-doc-listener[].
 
 [source, c]
 ----
-include::c:example$code_snippets/main.cpp[tags="add-document-replication-listener,indent=0]", indent=0]
+include::c:example$code_snippets/main.cpp[tags="add-document-replication-listener", indent=0]
 ----
 
 
@@ -978,20 +1017,29 @@ This can be very useful in tracking the progress of a push sync, enabling the ap
 
 * Use the {url-api-references-classes}replication.html#ga493eeac915dd54a274b907a010664a2e[CBLReplicator.isDocumentPending()] method to quickly check whether an individual document is pending a push.
 
-[#ex-pending]
 .Use Pending Document ID API
-
-
 [#ex-pending]
 ====
-
-
+[{tabs}]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="replication-pendingdocuments", indent=0]
 ----
+--
 
-
+C++::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=replication-pendingdocuments,indent=0]
+----
+--
+=====
 ====
 
 <.> {url-api-references-classes}replication.html#ga6e9902ae56d5fec0fc19b29c28f1828f[CBLReplicator_PendingDocumentIDs()] returns a list of the document IDs for all documents waiting to be pushed.
@@ -1012,17 +1060,28 @@ You can find further information on database operations in xref:c:database.adoc[
 
 // Example 9
 .Stop replicator
-
-
+[#ex-stop-repl]
 ====
-
-
+[{tabs}]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="p2p-act-rep-stop", indent=0]
 ----
+--
 
-
+C++::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=p2p-act-rep-stop,indent=0]
+----
+--
+=====
 ====
 
 <.> Here we initiate the stopping of the replication using the {url-api-references-classes}replication.html#ga548ce284032009546d4092745e89fa8e[CBLReplicator_Stop()] method.

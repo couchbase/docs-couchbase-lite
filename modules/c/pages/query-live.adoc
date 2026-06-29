@@ -37,11 +37,9 @@ When a change is detected the query automatically runs, and posts the new query 
 .Starting a Live Query
 [#ex-qry-start]
 
-
 [#ex-qry-start]
 ====
-
-[tabs]
+[{tabs}]
 =====
 C::
 +
@@ -50,10 +48,22 @@ C::
 ----
 include::c:example$code_snippets/main.cpp[tags="live-query", indent=0]
 ----
+--
+
+C++::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tag=live-query,indent=0]
+----
+--
+=====
+====
+
 <.> Build the query statements
 <.> Activate the _live_ query by attaching a listener.
-Save the token in order to detach the listener and stop the query later -- see xref:c:query-live.adoc#ex-qry-stop[]
---
+Save the token to detach the listener and stop the query later -- see xref:c:query-live.adoc#ex-qry-stop[]
 
 {cpp}::
 +
@@ -68,16 +78,12 @@ Save the token in order to detach the listener and stop the query later -- see x
 --
 =====
 
-====
-
 .Stop a Live Query
 [#ex-qry-stop]
 
-
 [#ex-qry-stop]
 ====
-
-[tabs]
+[{tabs}]
 =====
 C::
 +
@@ -86,7 +92,20 @@ C::
 ----
 include::c:example$code_snippets/main.cpp[tags="stop-live-query", indent=0]
 ----
-<.> Here we use the change listener token from xref:c:query-live.adoc#ex-qry-start[] to remove the listener.
+--
+
+C++::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tag=stop-live-query,indent=0]
+----
+--
+=====
+====
+
+<.> Here we use the change lister token from xref:c:query-live.adoc#ex-qry-start[] to remove the listener.
 Doing so stops the live query.
 --
 

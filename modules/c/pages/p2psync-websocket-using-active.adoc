@@ -1,7 +1,7 @@
 = Active Peer
 :page-aliases: clang:p2psync-websocket-using-active.adoc
 ifdef::show_edition[:page-edition: Enterprise Edition]
-:page-status: 
+:page-status:
 :page-role:
 :description: Couchbase Lite's Peer-to-Peer Synchronization enables edge devices to synchronize securely without consuming centralized cloud-server resources
 
@@ -169,9 +169,9 @@ The URL scheme for web socket URLs uses `ws:` (non-TLS) or `wss:` (SSL/TLS) pref
 
 // Example 2
 .Add Target to Configuration
-
+[#ex-cfg-tgt]
 ====
-[tabs]
+[{tabs}]
 =====
 C::
 +
@@ -182,12 +182,9 @@ include::c:example$code_snippets/main.cpp[tags="sgw-act-rep-initialize", indent=
 ----
 --
 
-{cpp}::
+C++::
 +
---
-[source.no-callouts, cpp]
-----
-include::c:example$code_snippets/cbl_cpp.cpp[tags="sgw-act-rep-initialize", indent=0]
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=sgw-act-rep-initialize,indent=0]
 ----
 --
 =====
@@ -216,11 +213,10 @@ We use `{url-api-references-replicator-config}[CBLReplicatorConfiguration]` clas
 ** Ad-hoc -- a one-shot replication of changed documents (`continuous=false`).
 
 // Example 3
-[#ex-repl-sync]
 .Configure replicator type and mode
-
+[#ex-repl-sync]
 ====
-[tabs]
+[{tabs}]
 =====
 C::
 +
@@ -231,12 +227,12 @@ include::c:example$code_snippets/main.cpp[tags="p2p-act-rep-config-type;p2p-act-
 ----
 --
 
-{cpp}::
+C++::
 +
 --
 [source.no-callouts, cpp]
 ----
-include::c:example$code_snippets/cbl_cpp.cpp[tags="p2p-act-rep-config-type;p2p-act-rep-config-cont", indent=0]
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=p2p-act-rep-config-type;p2p-act-rep-config-cont,indent=0]
 ----
 --
 =====
@@ -307,8 +303,7 @@ When necessary you can adjust any or all of those configurable values -- see: <<
 .Configuring Replication Retries
 [#ex-repl-retry]
 ====
-
-[tabs]
+[{tabs}]
 =====
 C::
 +
@@ -317,6 +312,19 @@ C::
 ----
 include::c:example$code_snippets/main.cpp[tags="replication-retry-config", indent=0]
 ----
+--
+
+C++::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=replication-retry-config,indent=0]
+----
+--
+=====
+====
+
 <.> Here we use {url-api-references-replicator-config}#a524408f9430d13c783762dce32f1126e[heartbeat] to set the required interval (in seconds) between the heartbeat pulses.
 <.> Here we use {url-api-references-replicator-config}#a5b6435c711d93f71566d8814506e0dff[maxAttempts] to set the required number of retry attempts.
 <.> Here we use {url-api-references-replicator-config}#a21d4fffd270c721d1600d7a835f17fd1[maxAttemptWaitTime] to set the required interval between retry attempts.
@@ -344,7 +352,7 @@ include::c:example$code_snippets/cbl_cpp.cpp[tags="replication-retry-config", in
 Define the credentials that your app (the client) is expecting to receive from the server (listener) in order to ensure that the server is one it is prepared to interact with.
 
 Note that the client cannot authenticate the server if TLS is turned off.
-When TLS is enabled (Sync Gateway's default) the client _must_ authenticate the server.
+When TLS is enabled (Sync Gateway's' default) the client _must_ authenticate the server.
 If the server cannot provide acceptable credentials then the connection will fail.
 
 Use the `{url-api-references-replicator-config}[CBLReplicatorConfiguration]` properties
@@ -354,7 +362,7 @@ to tell the replicator how to verify server-supplied TLS server certificates.
 * If there is a pinned certificate, nothing else matters, the server cert must *exactly* match the pinned certificate.
 * If there are no pinned certs and {url-api-references-replicator-config}#ad1a35fd126871670d2677cabff87f2c3[acceptOnlySelfSignedServerCertificate] is `true` then any self-signed certificate is accepted.
 Certificates that are not self signed are rejected, no matter who signed them.
-* If there are no pinned certificates and {url-api-references-replicator-config}#ad1a35fd126871670d2677cabff87f2c3[acceptOnlySelfSignedServerCertificate] is `false` (default), the client validates the server's certificates against the system CA certificates.
+* If there are no pinned certificates and {url-api-references-replicator-config}#ad1a35fd126871670d2677cabff87f2c3[acceptOnlySelfSignedServerCertificate] is `false` (default), the client validates the server's' certificates against the system CA certificates.
 The server must supply a chain of certificates whose root is signed by one of the certificates in the system CA bundle.
 
 // Example 4
@@ -369,8 +377,7 @@ C::
 --
 [tabs]
 ======
-
-CA Cert::
+CA Cert (C)::
 +
 --
 Set the client to expect and accept only CA attested certificates.
@@ -384,11 +391,24 @@ Only certificate chains with roots signed by a trusted CA are allowed.
 Self signed certificates are not allowed.
 --
 
-
-Self Signed Cert::
+CA Cert (C++)::
 +
 --
-Set the client to expect and accept only self-signed certificates
+Set the client to expect and accept only CA attested certificates.
+
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=p2p-act-rep-config-cacert,indent=0]
+----
+This is the default.
+Only certificate chains with roots signed by a trusted CA are allowed.
+Self signed certificates are not allowed.
+--
+
+Self Signed Cert (C)::
++
+--
+Set the client to expect and accept only self-signed certificates.
 
 [source, c]
 ----
@@ -398,72 +418,41 @@ Set this to `true` to accept any self signed cert.
 Any certificates that are not self-signed are rejected.
 --
 
-
-Pinned Certificate::
-+
---
-Set the client to expect and accept only a pinned certificate.
-
-[source, c]
-----
-include::c:example$code_snippets/main.cpp[tag=p2p-act-rep-config-pinnedcert, indent=0]
-----
---
-
-======
---
-
-{cpp}::
-+
---
-[tabs]
-======
-
-CA Cert::
-+
---
-Set the client to expect and accept only CA attested certificates.
-
-[source, cpp]
-----
-include::c:example$code_snippets/cbl_cpp.cpp[tags=p2p-act-rep-config-cacert, indent=0]
-----
-This is the default.
-Only certificate chains with roots signed by a trusted CA are allowed.
-Self signed certificates are not allowed.
---
-
-
-Self Signed Cert::
+Self Signed Cert (C++)::
 +
 --
 Set the client to expect and accept only self-signed certificates.
 
 [source, cpp]
 ----
-include::c:example$code_snippets/cbl_cpp.cpp[tags=p2p-act-rep-config-self-cert, indent=0]
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=p2p-act-rep-config-self-cert,indent=0]
 ----
 Set this to `true` to accept any self signed cert.
 Any certificates that are not self-signed are rejected.
 --
 
+Pinned Certificate (C)::
++
+--
+Set the client to expect and accept only a pinned certificate.
 
-Pinned Certificate::
+[source, c]
+----
+include::c:example$code_snippets/main.cpp[tags=p2p-act-rep-config-pinnedcert, indent=0]
+----
+--
+
+Pinned Certificate (C++)::
 +
 --
 Set the client to expect and accept only a pinned certificate.
 
 [source, cpp]
 ----
-include::c:example$code_snippets/cbl_cpp.cpp[tag=p2p-act-rep-config-pinnedcert, indent=0]
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=p2p-act-rep-config-pinnedcert,indent=0]
 ----
 --
-
 ======
---
-
-=====
-
 ====
 
 
@@ -477,7 +466,7 @@ We use {url-api-references-replicator-config}[CBLReplicatorConfiguration]'s {url
 
 For P2P using URLEndpointListener, the replicator supports two types of authentication:
 
-* Basic Authentication -- doesn't require TLS
+* Basic Authentication -- doesn't' require TLS
 * Client Certificate Authentication -- requires TLS
 
 [#initialize-replicator]
@@ -489,11 +478,9 @@ You can, optionally, add a change listener (see <<lbl-repl-mon>>) before startin
 
 // Example 7
 .Initialize and run replicator
-
-
+[#ex-init-repl]
 ====
-
-[tabs]
+[{tabs}]
 =====
 C::
 +
@@ -502,6 +489,19 @@ C::
 ----
 include::c:example$code_snippets/main.cpp[tags="p2p-act-rep-start-full;!p2p-act-rep-add-change-listener", indent=0]
 ----
+--
+
+C++::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=p2p-act-rep-start-full,indent=0]
+----
+--
+=====
+====
+
 <.> Initialize the replicator with the configuration
 <.> Start the replicator
 --
@@ -533,10 +533,10 @@ Use this to monitor changes and to inform on sync progress; this is an optional 
 You can add and a replicator change listener at any point; it will report changes from the point it is registered.
 
 .Best Practice
-TIP: Don't forget to save the token so you can remove the listener later
+TIP: Don't' forget to save the token so you can remove the listener later
 
 Use the {url-api-references-replicator}[Replication] class to add a change listener as a callback to the Replicator ({url-api-references-replicator}#gaa49518d403aaa95f9b342759e0e30769[CBLReplicator_AddChangeListener()]) -- see: <<ex-repl-mon>>.
-You will then be asynchronously notified of state changes.
+You'll then be asynchronously notified of state changes.
 
 
 [#lbl-repl-status]
@@ -557,20 +557,11 @@ The returned _ReplicationStatus_ structure comprises:
 
 // Example 8
 [#ex-repl-mon]
-
 .Monitor replication
 ====
-
-[tabs]
-=====
-
-C::
-+
---
 [tabs]
 ======
-
-Adding a Change Listener::
+Adding a Change Listener (C)::
 +
 --
 [source, c]
@@ -578,9 +569,17 @@ Adding a Change Listener::
 include::c:example$code_snippets/main.cpp[tags=p2p-act-rep-add-change-listener;!p2p-act-rep-add-change-listener-label,indent=0]
 ----
 --
-+
 
-Using replicator.status::
+Adding a Change Listener (C++)::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=p2p-act-rep-add-change-listener,indent=0]
+----
+--
+
+Using replicator.status (C)::
 +
 --
 [source, c]
@@ -588,38 +587,16 @@ Using replicator.status::
 include::c:example$code_snippets/main.cpp[tags=p2p-act-rep-status,indent=0]
 ----
 --
-======
---
 
-{cpp}::
-+
---
-[tabs]
-======
-
-Adding a Change Listener::
+Using replicator.status (C++)::
 +
 --
 [source, cpp]
 ----
-include::c:example$code_snippets/cbl_cpp.cpp[tags=p2p-act-rep-add-change-listener;!p2p-act-rep-add-change-listener-label,indent=0]
-----
---
-+
-
-Using replicator.status::
-+
---
-[source, cpp]
-----
-include::c:example$code_snippets/cbl_cpp.cpp[tags=p2p-act-rep-status,indent=0]
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=p2p-act-rep-status,indent=0]
 ----
 --
 ======
---
-
-=====
-
 ====
 
 
@@ -668,9 +645,9 @@ This can be very useful in tracking the progress of a push sync, enabling the ap
 
 [#ex-pending]
 .Use Pending Document ID API
+[#ex-pending]
 ====
-
-[tabs]
+[{tabs}]
 =====
 C::
 +
@@ -679,6 +656,19 @@ C::
 ----
 include::c:example$code_snippets/main.cpp[tags="replication-pendingdocuments", indent=0]
 ----
+--
+
+C++::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=replication-pendingdocuments,indent=0]
+----
+--
+=====
+====
+
 <.> {url-api-references-replicator}#ga6e9902ae56d5fec0fc19b29c28f1828f[CBLReplicator_PendingDocumentIDs()] returns a list of the document IDs for all documents waiting to be pushed.
 This is a snapshot and may have changed by the time the response is received and processed.
 <.> {url-api-references-replicator}#ga493eeac915dd54a274b907a010664a2e[CBLReplicator_IsDocumentPending()] returns `true` if the document is waiting to be pushed, and `false` otherwise.
@@ -712,11 +702,9 @@ You can find further information on database operations in xref:c:database.adoc[
 
 // Example 9
 .Stop replicator
-
-
+[#ex-stop-repl]
 ====
-
-[tabs]
+[{tabs}]
 =====
 C::
 +
@@ -727,16 +715,15 @@ include::c:example$code_snippets/main.cpp[tags="p2p-act-rep-stop", indent=0]
 ----
 --
 
-{cpp}::
+C++::
 +
 --
 [source, cpp]
 ----
-include::c:example$code_snippets/cbl_cpp.cpp[tags="p2p-act-rep-stop", indent=0]
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=p2p-act-rep-stop,indent=0]
 ----
 --
 =====
-
 ====
 
 Here we initiate the stopping of the replication using the {url-api-references-replicator}#ga548ce284032009546d4092745e89fa8e[CBLReplicator_Stop()] method.
@@ -759,17 +746,9 @@ For more complex solutions you can provide a custom conflict resolver - see: xre
 [#using-conflict-resolvers]
 .Using conflict resolvers
 ====
-
-[tabs]
+[{tabs}]
 =====
-
-C::
-+
---
-[tabs]
-======
-
-Local Wins::
+Local Wins (C)::
 +
 --
 [source, c]
@@ -778,7 +757,16 @@ include::c:example$code_snippets/main.cpp[tag=local-win-conflict-resolver,indent
 ----
 --
 
-Remote Wins::
+Local Wins (C++)::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=local-win-conflict-resolver,indent=0]
+----
+--
+
+Remote Wins (C)::
 +
 --
 [source, c]
@@ -787,12 +775,30 @@ include::c:example$code_snippets/main.cpp[tag=remote-win-conflict-resolver,inden
 ----
 --
 
-Merge::
+Remote Wins (C++)::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=remote-win-conflict-resolver,indent=0]
+----
+--
+
+Merge (C)::
 +
 --
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tag=merge-conflict-resolver,indent=0]
+----
+--
+
+Merge (C++)::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=merge-conflict-resolver,indent=0]
 ----
 --
 
@@ -836,7 +842,6 @@ include::c:example$code_snippets/cbl_cpp.cpp[tag=merge-conflict-resolver,indent=
 --
 
 =====
-
 ====
 
 Just as a replicator may observe a conflict -- when updating a document that has changed both in the local database and in a remote database -- any attempt to save a document may also observe a conflict, if a replication has taken place since the local app retrieved the document from the database.
@@ -848,8 +853,7 @@ In the event of conflicting keys, it will pick the key value from `new`.
 .Merging document properties
 [#ex-merge-props]
 ====
-
-[tabs]
+[{tabs}]
 =====
 C::
 +
@@ -860,16 +864,15 @@ include::c:example$code_snippets/main.cpp[tags="update-document-with-conflict-ha
 ----
 --
 
-{cpp}::
+C++::
 +
 --
 [source, cpp]
 ----
-include::c:example$code_snippets/cbl_cpp.cpp[tags="update-document-with-conflict-handler", indent=0]
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=update-document-with-conflict-handler,indent=0]
 ----
 --
 =====
-
 ====
 
 
