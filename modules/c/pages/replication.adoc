@@ -851,7 +851,8 @@ In this section::
 xref:c:replication.adoc#lbl-repl-chng[]  |
 xref:c:replication.adoc#lbl-repl-status[]  |
 xref:c:replication.adoc#lbl-repl-evnts[] |
-xref:c:replication.adoc#lbl-repl-pend[]
+xref:c:replication.adoc#lbl-repl-pend[] |
+xref:c:replication.adoc#lbl-repl-correlation-id[]
 
 You can monitor a replication’s status by using a combination of xref:c:replication.adoc#lbl-repl-chng[] and the `replication.status.activity` property -- see; {url-api-references-classes}replication.html#ga9421513c63f1d16bf4740c4d2515dd22[CBLReplicatorActivityLevel enum].
 This enables you to know, for example, when the replication is actively transferring data and when it has stopped.
@@ -1000,7 +1001,7 @@ include::c:example$code_snippets/main.cpp[tags="remove-document-replication-list
 [#document-access-removal-behavior]
 ==== Document Access Removal Behavior
 
-When access to a document is removed on Sync Gateway (see: Sync Gateway's xref:sync-gateway::sync-function-api.adoc[Sync Function]), the document replication listener sends a notification with the `AccessRemoved` flag set to `true` and subsequently purges the document from the database.
+When access to a document is removed on Sync Gateway (see: Sync Gateway's' xref:sync-gateway::sync-function-api.adoc[Sync Function]), the document replication listener sends a notification with the `AccessRemoved` flag set to `true` and subsequently purges the document from the database.
 
 
 [#lbl-repl-pend]
@@ -1013,7 +1014,7 @@ You can check whether documents are waiting to be pushed in any forthcoming sync
 
 * Use the {url-api-references-classes}replication.html#ga6e9902ae56d5fec0fc19b29c28f1828f[CBLReplicator_PendingDocumentIDs()] method, which returns a list of document IDs that have local changes, but which have not yet been pushed to the server.
 +
-This can be very useful in tracking the progress of a push sync, enabling the app to provide a visual indicator to the end user on its status, or decide when it is safe to exit.
+This can be useful in tracking the progress of a push sync, enabling the app to provide a visual indicator to the end user on its status, or decide when it's' safe to exit.
 
 * Use the {url-api-references-classes}replication.html#ga493eeac915dd54a274b907a010664a2e[CBLReplicator.isDocumentPending()] method to quickly check whether an individual document is pending a push.
 
@@ -1046,17 +1047,43 @@ include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=replication-pendingdocumen
 This is a snapshot and may have changed by the time the response is received and processed.
 <.> {url-api-references-classes}replication.html#ga493eeac915dd54a274b907a010664a2e[CBLReplicator.isDocumentPending()] returns `true` if the document is waiting to be pushed, and `false` otherwise.
 
+[#lbl-repl-correlation-id]
+=== Correlation ID
+The correlation ID is a read-only property that identifies the Sync Gateway session associated with a Couchbase Lite replicator.
+Use it to correlate log entries on the client and server when diagnosing replication issues.
+[#ex-repl-correlation-id]
+.Get the replicator correlation ID
+====
+[source, c]
+----
+String correlationID = replicator.getCorrelationId();
+----
+====
+
+[#lbl-repl-correlation-id]
+=== Correlation ID
+The correlation ID is a read-only property that identifies the Sync Gateway session associated with a Couchbase Lite replicator.
+Use it to correlate log entries on the client and server when diagnosing replication issues.
+[#ex-repl-correlation-id]
+.Get the replicator correlation ID
+====
+[source, c]
+----
+String correlationID = replicator.getCorrelationId();
+----
+====
+
 
 [#lbl-repl-stop]
 == Stop
 
 
 Stopping a replication is straightforward.
-It is done using {url-api-references-classes}replication.html#ga548ce284032009546d4092745e89fa8e[CBLReplicator_Stop()].
+It's' done using {url-api-references-classes}replication.html#ga548ce284032009546d4092745e89fa8e[CBLReplicator_Stop()].
 This initiates an asynchronous operation and so is not necessarily immediate.
 Your app should account for this potential delay before attempting any subsequent operations.
 
-You can find further information on database operations in xref:c:database.adoc[Databases].
+You can find further information about database operations in xref:c:database.adoc[Databases].
 
 // Example 9
 .Stop replicator
@@ -1143,7 +1170,7 @@ The following error codes are considered temporary by the Couchbase Lite replica
 
 Couchbase Lite footnote:[From 2.0] uses WebSockets as the communication protocol to transmit data.
 Some load balancers are not configured for WebSocket connections by default (NGINX for example);
-so it might be necessary to explicitly enable them in the load balancer's configuration (see xref:sync-gateway::load-balancer.adoc[Load Balancers]).
+so it might be necessary to explicitly enable them in the load balancer's' configuration (see xref:sync-gateway::load-balancer.adoc[Load Balancers]).
 
 By default, the WebSocket protocol uses compression to optimize for speed and bandwidth utilization.
 The level of compression is set on Sync Gateway and can be tuned in the configuration file (xref:sync-gateway:ROOT:refer/config-properties.adoc#replicator_compression[`replicator_compression`]).
@@ -1164,7 +1191,7 @@ For the 3.02. release, changes have been made to the way certificates on the hos
 [horizontal]
 
 Prior to CBL3.0.2:: The pinned certificate was only compared with the leaf certificate of the host. This is not always suitable as leaf certificates are usually valid for shorter periods of time.
-CBL-3.0.2{plus}:: The pinned certificate will be compared against any certificate in the server's certificate chain.
+CBL-3.0.2{plus}:: The pinned certificate will be compared against any certificate in the server's' certificate chain.
 
 
 The following steps describe how to configure certificate pinning between Couchbase Lite and Sync Gateway.
