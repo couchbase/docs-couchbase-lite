@@ -1048,9 +1048,10 @@ In this section::
 <<lbl-repl-chng>>  |
 <<lbl-repl-status>>  |
 <<lbl-repl-evnts>> |
-<<lbl-repl-pend>>
+<<lbl-repl-pend>> |
+<<lbl-repl-correlation-id>>
 
-You can monitor a replication's status by using a combination of <<lbl-repl-chng>> and the `replication.status.activity` property -- see; https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorStatus.html#Couchbase_Lite_Sync_ReplicatorStatus_Activity[Activity].
+You can monitor a replication's' status by using a combination of <<lbl-repl-chng>> and the `replication.status.activity` property -- see; https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorStatus.html#Couchbase_Lite_Sync_ReplicatorStatus_Activity[Activity].
 This enables you to know, for example, when the replication is actively transferring data and when it has stopped.
 
 You can also choose to monitor document changes -- see: <<lbl-repl-evnts>>.
@@ -1299,6 +1300,21 @@ This can be very useful in tracking the progress of a push sync, enabling the ap
 This is a snapshot and may have changed by the time the response is received and processed.
 <.> https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.Replicator.html#Couchbase_Lite_Sync_Replicator_IsDocumentPending_System_String_[Replicator.IsDocumentPending()] returns `true` if the document is waiting to be pushed, and `false` otherwise.
 
+
+[#lbl-repl-correlation-id]
+=== Correlation ID
+
+The correlation ID is a read-only property that identifies the Sync Gateway session associated with a Couchbase Lite replicator.
+Use it to correlate log entries on the client and server when diagnosing replication issues.
+
+[#ex-repl-correlation-id]
+.Get the replicator correlation ID
+====
+[source, C#]
+----
+string correlationID = replicator.CorrelationID;
+----
+====
 
 [#lbl-repl-stop]
 == Stop
