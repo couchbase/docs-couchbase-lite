@@ -1,4 +1,3 @@
-
 = Result Sets
 :page-role:
 :description: How to use Couchbase Lite Query's Result Sets
@@ -52,17 +51,28 @@ You access the retrieved document properties by converting each row's value, in 
 [#ex-acc-all]
 .Access All Properties
 
-
 [#ex-acc-all]
 ====
-
-
+[{tabs}]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="query-access-all", indent=0]
 ----
+--
 
-
+C++::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=query-access-all,indent=0]
+----
+--
+=====
 ====
 
 <.> Here we get the dictionary of document properties using the database name as the key.
@@ -82,17 +92,28 @@ Access the required document properties by retrieving the document from the data
 [#ex-acc-id]
 .Access by ID
 
-
 [#ex-acc-id]
 ====
-
-
+[{tabs}]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="query-access-id", indent=0]
 ----
+--
 
-
+C++::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=query-access-id,indent=0]
+----
+--
+=====
 ====
 
 <.> Extract the Id value from the dictionary and use it to get the document from the database
@@ -107,39 +128,65 @@ In this case each array element is an array of key value pairs (property name/pr
 Access the retrieved properties by converting each row into a dictionary -- as shown in xref:c:query-resultsets.adoc#ex-acc-specific[].
 
 [#ex-acc-specific]
-
+.Access Selected Properties
 
 [#ex-acc-specific]
 ====
-
-
+[{tabs}]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="query-access-props", indent=0]
 ----
+--
 
-
+C++::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=query-access-props,indent=0]
+----
+--
+=====
 ====
 
 
 [#json-result-sets]
 == JSON Result Sets
 
-[#ex-json]
-.Using JSON Results
-
-
-[#ex-json]
-====
 
 Use {url-api-references-classes}json.html#ga3450acc0690101545d75986b91e4080[FLValue_ToJSON()] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See xref:c:query-resultsets.adoc#ex-json[] for a working example.
 
+
+[#ex-json]
+.Using JSON Results
+
+[#ex-json]
+====
+[{tabs}]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="query-access-json", indent=0]
 ----
+--
 
-
+C++::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=query-access-json,indent=0]
+----
+--
+=====
 ====
 
 

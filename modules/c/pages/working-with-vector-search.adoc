@@ -1,7 +1,7 @@
 = Working with Vector Search
-:page-status: 
+:page-status:
 :page-edition: Enterprise
-:page-aliases: 
+:page-aliases:
 ifdef::show_edition[:page-edition: {release}]
 ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
@@ -21,12 +21,26 @@ NOTE: You must install Couchbase Lite to use the Vector Search extension.
 
 This method shows how you can create a vector index using the Couchbase Lite Vector Search extension.
 
+[{tabs}]
+====
+C::
++
+--
 [source, c]
 ----
-
 include::c:example$code_snippets/VectorSearch.h[tags=vs-create-custom-config]
-
 ----
+--
+
+C++::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/vector_search.cpp[tag=vs-create-custom-config]
+----
+--
+====
 
 First, initialize the `config` object with the `VectorIndexConfiguration()` method with the following parameters:
 
@@ -56,7 +70,7 @@ For more information on specific configurations, see xref:c:vector-search.adoc[V
 |Expression
 |image:ROOT:yes.png[]
 |No default
-| A SQL++ expression indicating where to get the vectors. 
+| A SQL++ expression indicating where to get the vectors.
 A document property for embedded vectors or
 `prediction()` to call a registered Predictive model.
 |Number of Dimensions
@@ -86,7 +100,7 @@ a|There are three possible configurations:
 * None
 No compression, No data loss
 * Scalar Quantizer (SQ) or SQ-8 bits (Default)
-Reduces the number of bits per dimension 
+Reduces the number of bits per dimension
 * Product Quantizer (PQ)
 Reduces the number of dimensions and bits per dimension
 
@@ -131,12 +145,26 @@ Below are example configurations of the previously mentioned methods.
 
 This method shows you how to create a Vector Index with embeddings.
 
+[{tabs}]
+====
+C::
++
+--
 [source, c]
 ----
-
 include::c:example$code_snippets/VectorSearch.h[tags=vs-create-index]
-
 ----
+--
+
+C++::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/vector_search.cpp[tag=vs-create-index]
+----
+--
+====
 
 . First, create the standard configuration, setting up an expression, number of dimensions and number of centroids for the vector embedding.
 
@@ -147,14 +175,28 @@ include::c:example$code_snippets/VectorSearch.h[tags=vs-create-index]
 This method generates vectors to be indexed for each document at the index time by using the `prediction()` function.
 The key difference to note is that the `config` object uses the output of the `prediction()` function as the `expression` parameter to generate the vector index.
 
+[{tabs}]
+====
+C::
++
+--
 [source, c]
 ----
-        
 include::c:example$code_snippets/VectorSearch.h[tags=vs-create-predictive-index]
-
 ----
+--
 
-NOTE: You can use less storage by using the `prediction()` function as the encoded vectors will only be stored in the index. 
+C++::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/vector_search.cpp[tag=vs-create-predictive-index]
+----
+--
+====
+
+NOTE: You can use less storage by using the `prediction()` function as the encoded vectors will only be stored in the index.
 However, the index time will be longer as vector embedding generation is occurring at run time.
 
 == Create a Lazy Vector Index
@@ -162,12 +204,26 @@ However, the index time will be longer as vector embedding generation is occurri
 Lazy indexing is an alternate approach to using the standard predictive model with regular vector indexes which handle the indexing process automatically.
 You can use lazy indexing to use a ML model that is not available locally on the device and to create vector indexes without having vector embeddings in the documents.
 
+[{tabs}]
+====
+C::
++
+--
 [source, c]
 ----
-
 include::c:example$code_snippets/VectorSearch.h[tags=vs-lazy-index-config]
-
 ----
+--
+
+C++::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/vector_search.cpp[tag=vs-lazy-index-config]
+----
+--
+====
 
 You can enable lazy vector indexing by setting the `isLazy` property to `true` in your vector index configuration.
 
@@ -177,12 +233,26 @@ NOTE: Lazy Vector Indexing is opt-in functionality, the `isLazy` property is set
 
 Below is an example of how you can update your lazy index.
 
+[{tabs}]
+====
+C::
++
+--
 [source, c]
 ----
-
 include::c:example$code_snippets/VectorSearch.h[tags=vs-create-lazy-index-embedding]
-
 ----
+--
+
+C++::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/vector_search.cpp[tag=vs-create-lazy-index-embedding]
+----
+--
+====
 
 You procedurally update the vectors in the index by looping through the vectors in batches until you reach the value of the `limit` parameter.
 
@@ -190,7 +260,7 @@ The update process follows the following sequence:
 
 . Get a value for the updater.
 
-.. If the there is no value for the vector, handle it. 
+.. If the there is no value for the vector, handle it.
 In this case, the vector will be skipped and considered the next time `BeginUpdate()` is called.
 +
 NOTE: A key benefit of lazy indexing is that the indexing process continues if a vector fails to generate.
@@ -215,29 +285,57 @@ IMPORTANT: Similar to the xref:c:fts.adoc[Full Text Search] `match()` function, 
 You can use Hybrid Vector Search (Hybrid Search) to perform vector search in conjunction with regular SQL++ queries.
 With Hybrid Search, you perform vector search on documents that have already been filtered based on criteria specified in the `WHERE` clause.
 
-NOTE: A `LIMIT` clause is required for non-hybrid Vector Search, this avoids a slow, exhaustive unlimited search of all possible vectors. 
+NOTE: A `LIMIT` clause is required for non-hybrid Vector Search, this avoids a slow, exhaustive unlimited search of all possible vectors.
 
 === Hybrid Vector Search with Full Text Match
 
 Below is an example of using Hybrid Search with the Full Text `match()` function.
 
+[{tabs}]
+====
+C::
++
+--
 [source, c]
 ----
-        
 include::c:example$code_snippets/VectorSearch.h[tags=vs-hybrid-ftmatch]
-
 ----
+--
+
+C++::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/vector_search.cpp[tag=vs-hybrid-ftmatch]
+----
+--
+====
 
 === Prediction with Hybrid Vector Search
 
 Below is an example of using Hybrid Search with an array of vectors generated by the `Prediction()` function at index time.
 
+[{tabs}]
+====
+C::
++
+--
 [source, c]
 ----
-        
 include::c:example$code_snippets/VectorSearch.h[tags=vs-hybrid-prediction]
-
 ----
+--
+
+C++::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/vector_search.cpp[tag=vs-hybrid-prediction]
+----
+--
+====
 
 == `APPROX_VECTOR_DISTANCE(vector-expr, target-vector, [metric], [nprobes], [accurate])`
 
@@ -259,27 +357,41 @@ Must match the expression specified in the vector index exactly.
 |Values : "EUCLIDEAN_SQUARED", “L2_SQUARED”, “EUCLIDEAN”, “L2”,  ”COSINE”, “DOT”.
 If not specified, the metric set in the vector index is used.
 If specified, the metric must match with the metric set in the vector index.
-This optional parameter allows multiple indexes to be attached to the same field in a document. 
+This optional parameter allows multiple indexes to be attached to the same field in a document.
 |nprobes
 |image:ROOT:no.png[]
 |Number of buckets to search for the nearby vectors.
-If not specified, the nprobes set in the vector index is used. 
+If not specified, the nprobes set in the vector index is used.
 |accurate
 |image:ROOT:no.png[]
-|If not present, false will be used, which means that the quantized/encoded vectors in the index will be used for calculating the distance. 
+|If not present, false will be used, which means that the quantized/encoded vectors in the index will be used for calculating the distance.
 
-IMPORTANT: Only accurate = false is supported 
+IMPORTANT: Only accurate = false is supported
 
 |===
 
 === Use `APPROX_VECTOR_DISTANCE()`
 
+[{tabs}]
+====
+C::
++
+--
 [source, c]
 ----
-        
 include::c:example$code_snippets/VectorSearch.h[tags=vs-apvd-where]
-
 ----
+--
+
+C++::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/vector_search.cpp[tag=vs-apvd-where]
+----
+--
+====
 
 This function returns the approximate distance between a given vector, typically generated from your ML model, and an array of vectors with size equal to the `LIMIT` parameter, collected by a SQL++ query using `APPROX_VECTOR_DISTANCE()`.
 
@@ -287,12 +399,26 @@ This function returns the approximate distance between a given vector, typically
 
 Below is an example of using `APPROX_VECTOR_DISTANCE()` with an array of vectors generated by the `Prediction()` function at index time.
 
+[{tabs}]
+====
+C::
++
+--
 [source, c]
 ----
-        
 include::c:example$code_snippets/VectorSearch.h[tags=vs-apvd-prediction]
-
 ----
+--
+
+C++::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/vector_search.cpp[tag=vs-apvd-prediction]
+----
+--
+====
 
 == See Also
 

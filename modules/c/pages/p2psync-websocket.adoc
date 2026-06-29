@@ -1,4 +1,3 @@
-
 = Data Sync Peer-to-Peer
 :page-aliases: clang:p2psync-websocket.adoc, c:landing-p2psync.adoc
 ifdef::show_edition[:page-edition: Enterprise Edition]
@@ -159,17 +158,29 @@ include::c:example$code_snippets/main.cpp[tags="listener-simple", indent=0]
 .Simple Replicator
 [#ex-simple-replicator]
 ====
-
-This simple replicator configuration will give you an encrypted, bi-directional Peer-to-Peer synchronization with automatic conflict resolution.
-
+[{tabs}]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="replicator-simple", indent=0]
 ----
+--
 
+C++::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=replicator-simple,indent=0]
+----
+--
+=====
 ====
 
-. Get the Listener's endpoint.
+. Get the Listener's' endpoint.
 Here we use a known URL, but it could be a URL established dynamically in a discovery phase. @/replConfig.endpoint/
 . Initialize the replicator configuration with the database to be synchronized and the Listener it is to synchronize with. @/replConfig.collections/
 . Configure the replicator to expect a self-signed certificate from the Listener. @/replConfig.acceptOnlySelfSignedServerCertificate/
@@ -186,7 +197,7 @@ Here we use a known URL, but it could be a URL established dynamically in a disc
 
 The `URLEndpointListener` is the listener for peer-to-peer synchronization.
 It acts like a passive replicator, in the same way that Sync Gateway does in a 'standard' replication.
-On the client side, the listener's endpoint is used to point the replicator to the listener.
+On the client side, the listener's' endpoint is used to point the replicator to the listener.
 
 Core functionalities of the listener are:
 --
