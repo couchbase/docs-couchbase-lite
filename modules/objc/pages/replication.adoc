@@ -1124,6 +1124,18 @@ include::objc:example$code_snippets/SampleCodeTest.m[tags="replication-pendingdo
 This is a snapshot and may have changed by the time the response is received and processed.
 <.> https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicator.html#/c:objc(cs)CBLReplicator(im)isDocumentPending:error:[CBLReplicator.isDocumentPending()] returns `true` if the document is waiting to be pushed, and `false` otherwise.
 
+[#lbl-repl-correlation-id]
+=== Correlation ID
+The correlation ID is a read-only property that identifies the Sync Gateway session associated with a Couchbase Lite replicator.
+Use it to correlate log entries on the client and server when diagnosing replication issues.
+[#ex-repl-correlation-id]
+.Get the replicator correlation ID
+====
+[source, objc]
+----
+NSString *correlationID = replicator.correlationID;
+----
+====
 
 [#lbl-repl-correlation-id]
 === Correlation ID
