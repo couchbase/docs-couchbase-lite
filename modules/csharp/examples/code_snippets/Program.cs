@@ -1519,6 +1519,15 @@ namespace api_walkthrough
             // end::tojson-array[]
         }
 
+        public static void DeleteTLSIdentity()
+        {
+
+            // tag::p2p-tlsid-delete-id-from-keychain[]
+            var store = new X509Store(StoreName.My);
+            TLSIdentity.DeleteIdentity(store, "CBL-Server-Cert", null); // <.>
+            // end::p2p-tlsid-delete-id-from-keychain[]
+        }
+
         public void JsonApiDictionary()
         {
             var ourdbname = "ournewdb";
@@ -1661,6 +1670,61 @@ namespace api_walkthrough
             var replicator = new Replicator(replConfig); // <.>
             replicator.Start(); // <.>
             // end::replicator-simple[]
+        }
+
+        public void P2PActivePeer()
+        {
+            var collection = Database!.GetDefaultCollection();
+
+            // tag::p2p-act-rep-func[]
+            // tag::p2p-act-rep-config-type[]
+            var url = new URLEndpoint(new Uri("wss://listener.com:4984/otherDB"));
+            var collectionConfig = new CollectionConfiguration(collection)
+            {
+                // tag::p2p-act-rep-config-cont[]
+                // Configure Sync Mode
+                ConflictResolver = new LocalWinConflictResolver() // <.>
+                // end::p2p-act-rep-config-cont[]
+            };
+
+            var replConfig = new ReplicatorConfiguration([collectionConfig], url)
+            {
+                // tag::p2p-act-rep-config-self-cert[]
+                // Configure Server Security -- only accept self-signed certs
+                AcceptOnlySelfSignedServerCertificate = true, // <.>
+                // end::p2p-act-rep-config-self-cert[]
+
+                // Configure Client Security
+                // tag::p2p-act-rep-auth[]
+                // Configure basic auth using user credentials
+                Authenticator = new BasicAuthenticator("valid.user", "valid.password.string") // <.>
+                // end::p2p-act-rep-auth[]
+            };
+            // end::p2p-act-rep-config-type[]
+
+            // tag::p2p-act-rep-start-full[]
+            // Initialize and start a replicator
+            // Initialize replicator with configuration data
+            var replicator = new Replicator(replConfig); // <.>
+
+            // tag::p2p-act-rep-add-change-listener[]
+            // tag::p2p-act-rep-add-change-listener-label[]
+            // Optionally add a change listener // <.>
+            var token = replicator.AddChangeListener((_, args) =>
+            {
+                if (args.Status.Error != null) {
+                    Console.WriteLine($"Error :: {args.Status.Error}");
+                }
+            });
+            // end::p2p-act-rep-add-change-listener-label[]
+            // end::p2p-act-rep-add-change-listener[]
+
+            // tag::p2p-act-rep-start[]
+            // Start replicator
+            replicator.Start(); // <.>
+            // end::p2p-act-rep-start[]
+            // end::p2p-act-rep-start-full[]
+            // end::p2p-act-rep-func[]
         }
 
         private static void ListenerInitialize()
@@ -1830,10 +1894,49 @@ namespace api_walkthrough
             }
         }
 
+
+        public void ConfigureTLSListenerIdentity()
+        {
+            var collection = Database!.GetDefaultCollection();
+            var store = new X509Store(StoreName.My);
+
+            // tag::listener-config-tls-id-full[]
+            // tag::listener-config-tls-id-caCert[]
+            var serverData = File.ReadAllBytes("server.p12"); // <.>
+            var serverIdentity = TLSIdentity.ImportIdentity(store,
+                serverData,
+                "password", // <.>
+                "CBL-Server-Cert",
+                null); // <.>
+            var endpointConfigCa = new URLEndpointListenerConfiguration([collection])
+            {
+                TlsIdentity = serverIdentity // <.>
+            };
+            // end::listener-config-tls-id-caCert[]
+            // tag::listener-config-tls-id-SelfSigned[]
+            var certAttrs = new Dictionary<string, string>
+            {
+                { Certificate.CommonNameAttribute, "Couchbase Inc" } // <.>
+            };
+            var selfSignedIdentity = TLSIdentity.CreateIdentity(
+                KeyUsages.ServerAuth,
+                certAttrs,
+                null,
+                store,
+                "CBL-Server-Cert", // <.>
+                null);
+            var endpointConfigSs = new URLEndpointListenerConfiguration([collection])
+            {
+                TlsIdentity = selfSignedIdentity // <.>
+            };
+            // end::listener-config-tls-id-SelfSigned[]
+            // end::listener-config-tls-id-full[]
+        }
+
         public void datatype_usage()
         {
             // tag::datatype_usage_createdb[]
-            // Get the database (and create it if it doesn’t exist).
+            // Get the database (and create it if it doesn't exist).
             using var database = new Database("hoteldb");
             var collection = Database!.GetDefaultCollection();
             // end::datatype_usage_createdb[]
@@ -1982,11 +2085,6 @@ namespace api_walkthrough
             Console.WriteLine("This program is not meant to be executed, only compiled");
         }
     }
-
-    /* ----------------------------------------------------------- */
-    /* ---------------------  ACTIVE SIDE  ----------------------- */
-    /* ---------------  stubs for documentation  ----------------- */
-    /* ----------------------------------------------------------- */
 
     class ActivePeer : IMessageEndpointDelegate
     {
@@ -2239,62 +2337,10 @@ namespace api_walkthrough
     // end::merge-conflict-resolver[]
  }
 
-#warning p2p-act-rep-func used, but contains nothing
-// tag::p2p-act-rep-func[]
-
-#warning p2p-act-rep-config-type used, but contains nothing
-// tag::p2p-act-rep-config-type[]
-
-// end::p2p-act-rep-config-type[]
-
-#warning autopurge-override used, but contains nothing
 // tag::autopurge-override[]
-// Set autopurge option
-// here we override its default
-
+// Note: EnableAutoPurge is a ReplicatorConfiguration property applicable to
+// Sync Gateway replication only. It is not supported for peer-to-peer replication.
 // end::autopurge-override[]
-
-#warning p2p-act-rep-config-cont used, but contains nothing
-// tag::p2p-act-rep-config-cont[]
-// Configure Sync Mode
-
-// end::p2p-act-rep-config-cont[]
-
-#warning p2p-act-rep-config-self-cert used, but contains nothing
-// tag::p2p-act-rep-config-self-cert[]
-// Configure Server Security -- only accept self-signed certs
-
-// end::p2p-act-rep-config-self-cert[]
-
-// Configure Client Security // <.>
-
-#warning p2p-act-rep-auth used, but contains nothing
-// tag::p2p-act-rep-auth[]
-// Configure basic auth using user credentials
-
-// end::p2p-act-rep-auth[]
-
-#warning p2p-act-rep-start-full used, but contains nothing
-// tag::p2p-act-rep-start-full[]
-// Initialize and start a replicator
-// Initialize replicator with configuration data
-
-#warning p2p-act-rep-add-change-listener used, but contains nothing
-// tag::p2p-act-rep-add-change-listener[]
-#warning p2p-act-rep-add-change-listener-label used, but contains nothing
-// tag::p2p-act-rep-add-change-listener-label[]
-//Optionally add a change listener // <.>
-// end::p2p-act-rep-add-change-listener-label[]
-
-// end::p2p-act-rep-add-change-listener[]
-
-#warning p2p-act-rep-start used, but contains nothing
-// tag::p2p-act-rep-start[]
-// Start replicator
-
-// end::p2p-act-rep-start[]
-// end::p2p-act-rep-start-full[]
-// end::p2p-act-rep-func[]
 
 #warning p2p-act-rep-config-cacert used, but contains nothing
 // tag::p2p-act-rep-config-cacert[]
@@ -2318,10 +2364,6 @@ namespace api_walkthrough
 #warning p2p-tlsid-store-in-keychain used, but contains nothing
 // tag::p2p-tlsid-store-in-keychain[]
 // end::p2p-tlsid-store-in-keychain[]
-
-#warning p2p-tlsid-delete-id-from-keychain used, but contains nothing
-// tag::p2p-tlsid-delete-id-from-keychain[]
-// end::p2p-tlsid-delete-id-from-keychain[]
 
 public class MyClass
 {
