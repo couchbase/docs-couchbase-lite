@@ -1,4 +1,3 @@
-
 = Using Full-Text Search
 :page-aliases: clang:fts.adoc
 :page-role:
@@ -11,13 +10,6 @@
 :url-api-references-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__
 
 
-// define abstract -- no include in root-commons content
-// :param-abstract!:
-// :param-related: xref:c:querybuilder.adoc#lbl-predquery[Predictive Queries] | xref:c:indexing.adoc[Indexing] | xref:c:querybuilder.adoc[QueryBuilder]
-// :topic-group: Queries
-// include::ROOT:partial$_show_page_header_block.adoc[]
-
-// Present common content
 [abstract]
 --
 Description -- _{description}_ +
@@ -41,17 +33,28 @@ They create and use an FTS index built from the hotel's `Overview` text.
 .Using {sqlpp}'s FullTextIndexConfiguration
 [#ex-indexbuilder]
 
-
 [#ex-indexbuilder]
 ====
-
-
+[{tabs}]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="fts-index", indent=0]
 ----
+--
 
-
+C++::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tag=fts-index,indent=0]
+----
+--
+=====
 ====
 
 
@@ -70,17 +73,28 @@ The following example finds all hotels mentioning _Michigan_ in their _Overview_
 .Using {sqlpp} Full Text Search
 [#ex-indexbuilder]
 
-
 [#ex-indexbuilder]
 ====
-
-
+[{tabs}]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="fts-query", indent=0]
 ----
+--
 
-
+C++::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tag=fts-query,indent=0]
+----
+--
+=====
 ====
 
 
@@ -139,7 +153,7 @@ Query the database for documents for which the term "linux" appears in the docum
 
 A _phrase query_ is one that retrieves all documents containing a nominated set of terms or term prefixes in a specified order with no intervening tokens.
 
-Phrase queries are specified by enclosing a space separated sequence of terms or term prefixes in double quotes (").
+Phrase queries are specified by enclosing a space separated sequence of terms or term prefixes in double quotes ("").
 
 .Phrase query
 ====
@@ -194,7 +208,7 @@ Query for the set of documents that contains the term "linux", and at least one 
 [#ordering-results]
 == Ordering Results
 
-It's very common to sort full-text results in descending order of relevance.
+It's' very common to sort full-text results in descending order of relevance.
 This can be a very difficult heuristic to define, but Couchbase Lite comes with a ranking function you can use.
 
 In the `OrderBy` array, use a string of the form `Rank(X)`, where `X` is the property or expression being searched, to represent the ranking of the result.
@@ -244,9 +258,3 @@ https://docs.couchbase.com/tutorials/[Tutorials]
 ++++
 </div>
 ++++
-
-// Include common footer block -- this is now part of
-// Common Content component for this page
-// include::ROOT:partial$block-related-content-query.adoc[]
-
-

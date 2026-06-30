@@ -1,7 +1,7 @@
 = Multipeer P2P Replicator
 ifdef::show_edition[:page-edition: Enterprise Edition]
 :description: The Multipeer Replicator enables lightweight, self-organizing mesh networks over Wi-Fi and Bluetooth Low Energy.
-:source-language: swift
+:source-language: objc
 
 
 [abstract]
@@ -10,16 +10,12 @@ This approach requires minimal setup and automates peer discovery and connectivi
 
 
 [#introduction]
-// == Introduction
-// tag::introduction-full[]
-// tag::introduction[]
+== Introduction
+
 Couchbase Lite's Peer-to-Peer synchronization solution offers secure storage and bidirectional data synchronization between mobile and IoT devices without needing a centralized cloud-based control point.
 
 For small mesh topologies, Multipeer Replicator offers autodiscovery over Wi-Fi and Bluetooth Low Energy, with secure communication via TLS and certificate-based authentication.
 The dynamic mesh topology gives optimal peer connectivity and the lightweight and low-maintenance configuration requires less management and less code than using active-passive peer-to-peer sync.
-
-// end::introduction[]
-// end::introduction-full[]
 
 
 == Overview
@@ -81,7 +77,7 @@ See <<automatic-transport-switching>>.
 
 See <<platform-configuration>> for the required `Info.plist` keys.
 
-See xref:swift:supported-os.adoc[Supported Platforms] for the full platform support matrix.
+See xref:objc:supported-os.adoc[Supported Platforms] for the full platform support matrix.
 
 [#platform-configuration]
 === Bluetooth Platform Configuration
@@ -127,27 +123,27 @@ To use Bluetooth transport, declare a Bluetooth usage description.
 
 === Collection Configurations
 
-You can specify one or more collections available for replication when creating a `MultipeerReplicatorConfiguration`.
-For each collection, you'll create `MultipeerCollectionConfiguration` with the collection object and optionally configure a custom conflict resolver or any replication filters you want to use for the collection.
+You can specify one or more collections available for replication when creating a `CBLMultipeerReplicatorConfiguration`.
+For each collection, you create `CBLMultipeerCollectionConfiguration` with the collection object and optionally configure a custom conflict resolver or any replication filters you want to use for the collection.
 
 
 .Specify collections without any configurations
-[source,swift]
+[source,objc]
 ----
-include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-collection-simple", indent=0]
+include::objc:example$code_snippets/MultipeerReplicator.m[tags="multipeer-collection-simple", indent=0]
 ----
 
 .Specify collections with some configuration
-[source,swift]
+[source,objc]
 ----
-include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-collection-config", indent=0]
+include::objc:example$code_snippets/MultipeerReplicator.m[tags="multipeer-collection-config", indent=0]
 ----
 
 === Peer Identity
 
 Each peer in the Multipeer replication is uniquely identified and authenticated by using a peer's certificate.
 
-Multipeer Replicator which uses TLS communication by default requires to specify a `TLSIdentity` object for specifying the identity.
+Multipeer Replicator uses TLS communication by default and requires a `CBLTLSIdentity` object for specifying the identity.
 
 You can use either a self-signed certificate for the identity or have an authority or issuer sign the identity's certificate.
 The choice depends on your specific security requirements and deployment environment.
@@ -159,9 +155,9 @@ As each peer could be either a client or a server to the other peer in the Multi
 When using a certificate authority (CA) signed identity, the issuer's certificate authenticates the connecting peer.
 
 .Get and Create an identity signed by an issuer
-[source,swift]
+[source,objc]
 ----
-include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-tlsidentity", indent=0]
+include::objc:example$code_snippets/MultipeerReplicator.m[tags="multipeer-tlsidentity", indent=0]
 ----
 
 ==== Self-Signed Identity
@@ -170,84 +166,86 @@ For environments where certificate authority management is not feasible, you can
 This approach is commonly used in closed network environments where devices need to authenticate with each other without external certificate authorities.
 
 .Creating a self-signed identity for peer authentication
-[source,swift]
+[source,objc]
 ----
-include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-selfsigned-tlsidentity", indent=0]
+include::objc:example$code_snippets/MultipeerReplicator.m[tags="multipeer-selfsigned-tlsidentity", indent=0]
 ----
 
 When using self-signed certificates, implement your own certificate validation logic in the authenticator callback to make sure only trusted peers can join your mesh network.
 
 === Peer Authenticator
 
-`MultipeerReplicator` only supports certificate based authentication.
+`CBLMultipeerReplicator` only supports certificate based authentication.
 You can specify the authenticator in two ways:
 
 * certificate authentication callback
 * root certificates.
 
-When specifying the certificate authentication callback, the callback calls the remote peer's identity certificate.
+When specifying the certificate authentication callback, the callback receives the remote peer's identity certificate.
 
 When specifying the root certificates, the Multipeer replicator automatically authenticates the remote peer's identity certificate by verifying whether one of the specified root certificates signed the certificate.
 
 
 .Authenticator with authentication callback
-[source,swift]
+[source,objc]
 ----
-include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-authenticator-callback", indent=0]
+include::objc:example$code_snippets/MultipeerReplicator.m[tags="multipeer-authenticator-callback", indent=0]
 ----
 
 .Authenticator with root certificates
-[source,swift]
+[source,objc]
 ----
-include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-authenticator-rootcerts", indent=0]
+include::objc:example$code_snippets/MultipeerReplicator.m[tags="multipeer-authenticator-rootcerts", indent=0]
 ----
 
 [#transports]
 === Transports
 
-The `transports` property on `MultipeerReplicatorConfiguration` controls which transports the replicator uses for peer discovery and replication.
+The `transports` property on `CBLMultipeerReplicatorConfiguration` controls which transports the replicator uses for peer discovery and replication.
+
+The property type is `CBLMultipeerTransportSet`, an `NS_OPTIONS` bitmask. To enable Bluetooth Low Energy alongside Wi-Fi, combine the transport options with the bitwise OR operator.
 
 ==== Wi-Fi Only
 
 Wi-Fi is the default transport. Existing applications continue to operate on Wi-Fi only after upgrading to CBL 4.1 with no code changes required.
 
 .Default (Wi-Fi only)
-[source,swift]
+[source,objc]
 ----
-include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-config-transports-default", indent=0]
+include::objc:example$code_snippets/MultipeerReplicator.m[tags="multipeer-config-transports-default", indent=0]
 ----
 
 ==== Bluetooth Only
 
-To use Bluetooth as the sole transport, set `transports` to `[.bluetooth]`. Peers discover each other using BLE advertising and scanning rather than DNS-SD.
+To use Bluetooth as the sole transport, set `transports` to `kCBLMultipeerTransportBluetooth`. Peers discover each other using BLE advertising and scanning rather than DNS-SD.
 
 .Bluetooth only
-[source,swift]
+[source,objc]
 ----
-include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-config-transports-bluetooth-only", indent=0]
+include::objc:example$code_snippets/MultipeerReplicator.m[tags="multipeer-config-transports-bluetooth-only", indent=0]
 ----
 
 ==== Wi-Fi and Bluetooth with Automatic Switching
 
-To enable both transports, set `transports` to include both `.wifi` and `.bluetooth`. The replicator prefers Wi-Fi and falls back to Bluetooth automatically when Wi-Fi is unavailable. See <<automatic-transport-switching>>.
+To enable both transports, set `transports` to `kCBLMultipeerTransportWifi | kCBLMultipeerTransportBluetooth`. The replicator prefers Wi-Fi and falls back to Bluetooth automatically when Wi-Fi is unavailable. See <<automatic-transport-switching>>.
 
 .Wi-Fi and Bluetooth
-[source,swift]
+[source,objc]
 ----
-include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-config-transports-both", indent=0]
+include::objc:example$code_snippets/MultipeerReplicator.m[tags="multipeer-config-transports-both", indent=0]
 ----
 
 NOTE: Bluetooth has lower throughput and higher latency than Wi-Fi, and its reliability can decrease as more peers join the Bluetooth network. We recommend using Wi-Fi as the primary transport for multipeer sync, with Bluetooth as a fallback, rather than relying on Bluetooth alone.
 
 === Create MultipeerReplicatorConfiguration
 
-The `MultipeerReplicatorConfiguration` can be created with a `peerGroupID` which identifies the peer-to-peer network used by the app, collection configurations, peer identity, and authenticator.
+The `CBLMultipeerReplicatorConfiguration` is created with a `peerGroupID` that identifies the peer-to-peer network used by the app, collection configurations, peer identity, and authenticator.
 
 
 .Creating MultipeerReplicatorConfiguration
-[source,swift]
+[source,objc]
 ----
-include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-config", indent=0]
+include::objc:example$code_snippets/MultipeerReplicator.m[tags="multipeer-config", indent=0]
 ----
 
 TIP: Performance may vary in mesh networks depending on your specific environment and number of peers.
@@ -256,7 +254,7 @@ We recommend running tests with your network configuration to assess any effects
 [#automatic-transport-switching]
 == Automatic Transport Switching
 
-When `MultipeerReplicator` is configured with both Wi-Fi and Bluetooth transports, it automatically selects the best available transport for each peer and switches transports as reachability changes.
+When `CBLMultipeerReplicator` is configured with both Wi-Fi and Bluetooth transports, it automatically selects the best available transport for each peer and switches transports as reachability changes.
 
 === Transport Preference
 
@@ -265,14 +263,14 @@ Bluetooth acts as a fallback when Wi-Fi cannot reach a peer.
 
 === Fallback to Bluetooth
 
-For an individual peer, `MultipeerReplicator` falls back to Bluetooth when the peer is no longer reachable over Wi-Fi.
+For an individual peer, `CBLMultipeerReplicator` falls back to Bluetooth when the peer is no longer reachable over Wi-Fi.
 This can occur if the peer disables Wi-Fi, becomes unreachable on the local network, or if replication over Wi-Fi fails because of a network-related error.
 
-In cases of connection or replication failure over Wi-Fi, `MultipeerReplicator` performs a small number of retries before falling back to Bluetooth.
+In cases of connection or replication failure over Wi-Fi, `CBLMultipeerReplicator` performs a small number of retries before falling back to Bluetooth.
 
 === Return to Wi-Fi
 
-If a peer becomes reachable over Wi-Fi while replication is active over Bluetooth, `MultipeerReplicator` establishes a Wi-Fi connection in parallel with the existing Bluetooth connection.
+If a peer becomes reachable over Wi-Fi while replication is active over Bluetooth, `CBLMultipeerReplicator` establishes a Wi-Fi connection in parallel with the existing Bluetooth connection.
 The Bluetooth connection remains active until the Wi-Fi connection is fully established and replication has resumed over Wi-Fi.
 This prevents any interruption in synchronization during the transition.
 
@@ -282,65 +280,65 @@ This prevents any interruption in synchronization during the transition.
 === Create MultipeerReplicator with Configuration
 
 .Creating MultipeerReplicator
-[source,swift]
+[source,objc]
 ----
-include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-replicator", indent=0]
+include::objc:example$code_snippets/MultipeerReplicator.m[tags="multipeer-replicator", indent=0]
 ----
 
 === Start
 
 .Starting MultipeerReplicator
-[source,swift]
+[source,objc]
 ----
-include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-replicator-start", indent=0]
+include::objc:example$code_snippets/MultipeerReplicator.m[tags="multipeer-replicator-start", indent=0]
 ----
 
 === Stop
 
 .Stopping MultipeerReplicator
-[source,swift]
+[source,objc]
 ----
-include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-replicator-stop", indent=0]
+include::objc:example$code_snippets/MultipeerReplicator.m[tags="multipeer-replicator-stop", indent=0]
 ----
 
 === Events
 
 In general, the connection should just work, and most of these optional listen events give status you may only want to use during development and testing.
 
-Status events include a `transport` property that identifies which transport the event applies to. `MultipeerReplicatorStatus` events are delivered per enabled transport and also as an aggregated status (where `transport` is `nil`) representing the overall replicator state.
+Status events include a `transport` property that identifies which transport the event applies to. `CBLMultipeerReplicatorStatus` events are delivered per enabled transport and also as an aggregated status (where `transport` is `nil`) representing the overall replicator state.
 
 Event types include the following:
 
 ==== Multipeer Replicator Status
 
 .Multipeer Replicator Status Listener
-[source,swift]
+[source,objc]
 ----
-include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-status-listener", indent=0]
+include::objc:example$code_snippets/MultipeerReplicator.m[tags="multipeer-status-listener", indent=0]
 ----
 
 ==== Peer Discovery Status
 
 .Peer Discovery Status Listener
-[source,swift]
+[source,objc]
 ----
-include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-peer-discovery-listener", indent=0]
+include::objc:example$code_snippets/MultipeerReplicator.m[tags="multipeer-peer-discovery-listener", indent=0]
 ----
 
 ==== Peer's Replicator Status
 
 .Peer's Replicator Status Listener
-[source,swift]
+[source,objc]
 ----
-include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-replicator-status-listener", indent=0]
+include::objc:example$code_snippets/MultipeerReplicator.m[tags="multipeer-replicator-status-listener", indent=0]
 ----
 
 ==== Peer's Document Replication
 
 .Peer's Document Replication Listener
-[source,swift]
+[source,objc]
 ----
-include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-document-replication-listener", indent=0]
+include::objc:example$code_snippets/MultipeerReplicator.m[tags="multipeer-document-replication-listener", indent=0]
 ----
 
 
@@ -349,49 +347,49 @@ include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-d
 === Peer Identifier
 
 A unique `peerID`, which is a digest of the peer's identity certificate, identifies each peer.
-You can get your `peerID` from the `peerID` property of the `MultipeerReplicator`.
+You can get your `peerID` from the `peerID` property of the `CBLMultipeerReplicator`.
 
 
 .Getting peer ID
-[source,swift]
+[source,objc]
 ----
-include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-peer-id", indent=0]
+include::objc:example$code_snippets/MultipeerReplicator.m[tags="multipeer-peer-id", indent=0]
 ----
 
 === Neighbor Peers
 
-You can get a list of current online peers' Identifiers from the `MultipeerReplicator` from the `neighborPeers` property.
+You can get a list of current online peers' identifiers from the `CBLMultipeerReplicator` using the `neighborPeers` property.
 
 .Getting neighbor peers
-[source,swift]
+[source,objc]
 ----
-include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-neighbor-peers", indent=0]
+include::objc:example$code_snippets/MultipeerReplicator.m[tags="multipeer-neighbor-peers", indent=0]
 ----
 
 === Peer Info
 
-The `PeerInfo` object provides information about a peer, including its identifier, certificate, online status, replicator status, neighbor peers, the transports on which the peer was discovered, and the transport currently used for replication.
+The `CBLPeerInfo` object provides information about a peer, including its identifier, certificate, online status, replicator status, neighbor peers, the transports on which the peer was discovered, and the transport currently used for replication.
 
 .Getting peer info
-[source,swift]
+[source,objc]
 ----
-include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-peer-info", indent=0]
+include::objc:example$code_snippets/MultipeerReplicator.m[tags="multipeer-peer-info", indent=0]
 ----
 
 
 == Logging
 
-`LogDomain` sets up the logging of:
+`CBLLogDomain` sets up the logging of:
 
 . Peer discovery log messages
 . Multipeer replication and mesh network management log messages
 
-[source,swift]
+[source,objc]
 ----
-include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-logdomain", indent=0]
+include::objc:example$code_snippets/MultipeerReplicator.m[tags="multipeer-logdomain", indent=0]
 ----
 
 
 == API Reference
 
-You can find https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift[Swift API References] here.
+You can find https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc[Objective-C API References] here.

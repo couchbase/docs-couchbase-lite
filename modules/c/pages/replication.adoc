@@ -1,13 +1,11 @@
-
 = Data Sync using Sync Gateway
 :page-aliases: clang:replication.adoc
 :page-role:
 :description: Couchbase Lite for C -- Synchronizing data changes between local and remote databases using Sync Gateway
 
 
-:source-language: c
+:source-language: c, c++
 
-:source-language: c
 :url-api-references-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__
 
 
@@ -220,24 +218,35 @@ The constructor provides:
 * the server's URL (including the port number and the name of the remote database to sync with)
 +
 --
-It is expected that the app will identify the IP address and URL and append the remote database name to the URL endpoint, producing for example: `wss://10.0.2.2:4984/travel-sample`
+It's expected that the app will identify the IP address and URL and append the remote database name to the URL endpoint, producing for example: `wss://10.0.2.2:4984/travel-sample`
 
 The URL scheme for web socket URLs uses `ws:` (non-TLS) or `wss:` (SSL/TLS) prefixes.
 --
 
 // Example 2
 .Add Target to Configuration
-
-
+[#ex-cfg-tgt]
 ====
-
-
+[{tabs}]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="sgw-act-rep-initialize", indent=0]
 ----
+--
 
-
+C++::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=sgw-act-rep-initialize,indent=0]
+----
+--
+=====
 ====
 
 <.> Note use of the scheme prefix (`wss://`
@@ -268,18 +277,28 @@ We use `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}
 // Example 3
 [#ex-repl-sync]
 .Configure replicator type and mode
-
-
 [#ex-repl-sync]
 ====
-
-
+[{tabs}]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="p2p-act-rep-config-type;p2p-act-rep-config-cont", indent=0]
 ----
+--
 
-
+C++::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=p2p-act-rep-config-type;p2p-act-rep-config-cont,indent=0]
+----
+--
+=====
 ====
 
 
@@ -348,18 +367,27 @@ When necessary you can adjust any or all of those configurable values -- see: xr
 
 .Configuring Replication Retries
 [#ex-repl-retry]
-
-
-[#ex-repl-retry]
 ====
-
-
+[{tabs}]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="replication-retry-config", indent=0]
 ----
+--
 
-
+C++::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=replication-retry-config,indent=0]
+----
+--
+=====
 ====
 
 <.> Here we use {url-api-prop-replicator-config-setHeartbeat} to set the required interval (in seconds) between the heartbeat pulses
@@ -752,22 +780,33 @@ xref:c:replication.adoc#lbl-repl-start[]  | xref:c:replication.adoc#lbl-repl-ckp
 [#lbl-repl-start]
 === Start Replicator
 
-Use the `{url-api-references-classes}replication.html[Replication]` class's {url-api-references-classes}replication.html#(im)initWithConfig:[initWith(config:)] constructor, to initialize the replicator with the configuration you have defined.
+Use the `{url-api-references-classes}replication.html[Replication]` class's' {url-api-references-classes}replication.html#(im)initWithConfig:[initWith(config:)] constructor, to initialize the replicator with the configuration you have defined.
 You can, optionally, add a change listener (see xref:c:replication.adoc#lbl-repl-mon[]) before starting the replicator running using {url-api-references-classes}replication.html#ga224926daa794a424c470bf86dd57aaf9[CBLReplicator_Start()].
 
 // Example 7
 .Initialize and run replicator
-
-
+[#ex-init-repl]
 ====
-
-
+[{tabs}]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="p2p-act-rep-start-full;!p2p-act-rep-add-change-listener", indent=0]
 ----
+--
 
-
+C++::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=p2p-act-rep-start-full,indent=0]
+----
+--
+=====
 ====
 
 <.> Initialize the replicator with the configuration
@@ -812,7 +851,8 @@ In this section::
 xref:c:replication.adoc#lbl-repl-chng[]  |
 xref:c:replication.adoc#lbl-repl-status[]  |
 xref:c:replication.adoc#lbl-repl-evnts[] |
-xref:c:replication.adoc#lbl-repl-pend[]
+xref:c:replication.adoc#lbl-repl-pend[] |
+xref:c:replication.adoc#lbl-repl-correlation-id[]
 
 You can monitor a replication’s status by using a combination of xref:c:replication.adoc#lbl-repl-chng[] and the `replication.status.activity` property -- see; {url-api-references-classes}replication.html#ga9421513c63f1d16bf4740c4d2515dd22[CBLReplicatorActivityLevel enum].
 This enables you to know, for example, when the replication is actively transferring data and when it has stopped.
@@ -933,7 +973,7 @@ Stop the listener as shown in xref:c:replication.adoc#ex-stop-doc-listener[].
 
 [source, c]
 ----
-include::c:example$code_snippets/main.cpp[tags="add-document-replication-listener,indent=0]", indent=0]
+include::c:example$code_snippets/main.cpp[tags="add-document-replication-listener", indent=0]
 ----
 
 
@@ -961,7 +1001,7 @@ include::c:example$code_snippets/main.cpp[tags="remove-document-replication-list
 [#document-access-removal-behavior]
 ==== Document Access Removal Behavior
 
-When access to a document is removed on Sync Gateway (see: Sync Gateway's xref:sync-gateway::sync-function-api.adoc[Sync Function]), the document replication listener sends a notification with the `AccessRemoved` flag set to `true` and subsequently purges the document from the database.
+When access to a document is removed on Sync Gateway (see: Sync Gateway's' xref:sync-gateway::sync-function-api.adoc[Sync Function]), the document replication listener sends a notification with the `AccessRemoved` flag set to `true` and subsequently purges the document from the database.
 
 
 [#lbl-repl-pend]
@@ -974,29 +1014,64 @@ You can check whether documents are waiting to be pushed in any forthcoming sync
 
 * Use the {url-api-references-classes}replication.html#ga6e9902ae56d5fec0fc19b29c28f1828f[CBLReplicator_PendingDocumentIDs()] method, which returns a list of document IDs that have local changes, but which have not yet been pushed to the server.
 +
-This can be very useful in tracking the progress of a push sync, enabling the app to provide a visual indicator to the end user on its status, or decide when it is safe to exit.
+This can be useful in tracking the progress of a push sync, enabling the app to provide a visual indicator to the end user on its status, or decide when it's' safe to exit.
 
 * Use the {url-api-references-classes}replication.html#ga493eeac915dd54a274b907a010664a2e[CBLReplicator.isDocumentPending()] method to quickly check whether an individual document is pending a push.
 
-[#ex-pending]
 .Use Pending Document ID API
-
-
 [#ex-pending]
 ====
-
-
+[{tabs}]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="replication-pendingdocuments", indent=0]
 ----
+--
 
-
+C++::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=replication-pendingdocuments,indent=0]
+----
+--
+=====
 ====
 
 <.> {url-api-references-classes}replication.html#ga6e9902ae56d5fec0fc19b29c28f1828f[CBLReplicator_PendingDocumentIDs()] returns a list of the document IDs for all documents waiting to be pushed.
 This is a snapshot and may have changed by the time the response is received and processed.
 <.> {url-api-references-classes}replication.html#ga493eeac915dd54a274b907a010664a2e[CBLReplicator.isDocumentPending()] returns `true` if the document is waiting to be pushed, and `false` otherwise.
+
+[#lbl-repl-correlation-id]
+=== Correlation ID
+The correlation ID is a read-only property that identifies the Sync Gateway session associated with a Couchbase Lite replicator.
+Use it to correlate log entries on the client and server when diagnosing replication issues.
+[#ex-repl-correlation-id]
+.Get the replicator correlation ID
+====
+[source, c]
+----
+String correlationID = replicator.getCorrelationId();
+----
+====
+
+[#lbl-repl-correlation-id]
+=== Correlation ID
+The correlation ID is a read-only property that identifies the Sync Gateway session associated with a Couchbase Lite replicator.
+Use it to correlate log entries on the client and server when diagnosing replication issues.
+[#ex-repl-correlation-id]
+.Get the replicator correlation ID
+====
+[source, c]
+----
+String correlationID = replicator.getCorrelationId();
+----
+====
 
 
 [#lbl-repl-stop]
@@ -1004,25 +1079,36 @@ This is a snapshot and may have changed by the time the response is received and
 
 
 Stopping a replication is straightforward.
-It is done using {url-api-references-classes}replication.html#ga548ce284032009546d4092745e89fa8e[CBLReplicator_Stop()].
+It's' done using {url-api-references-classes}replication.html#ga548ce284032009546d4092745e89fa8e[CBLReplicator_Stop()].
 This initiates an asynchronous operation and so is not necessarily immediate.
 Your app should account for this potential delay before attempting any subsequent operations.
 
-You can find further information on database operations in xref:c:database.adoc[Databases].
+You can find further information about database operations in xref:c:database.adoc[Databases].
 
 // Example 9
 .Stop replicator
-
-
+[#ex-stop-repl]
 ====
-
-
+[{tabs}]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="p2p-act-rep-stop", indent=0]
 ----
+--
 
-
+C++::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=p2p-act-rep-stop,indent=0]
+----
+--
+=====
 ====
 
 <.> Here we initiate the stopping of the replication using the {url-api-references-classes}replication.html#ga548ce284032009546d4092745e89fa8e[CBLReplicator_Stop()] method.
@@ -1084,7 +1170,7 @@ The following error codes are considered temporary by the Couchbase Lite replica
 
 Couchbase Lite footnote:[From 2.0] uses WebSockets as the communication protocol to transmit data.
 Some load balancers are not configured for WebSocket connections by default (NGINX for example);
-so it might be necessary to explicitly enable them in the load balancer's configuration (see xref:sync-gateway::load-balancer.adoc[Load Balancers]).
+so it might be necessary to explicitly enable them in the load balancer's' configuration (see xref:sync-gateway::load-balancer.adoc[Load Balancers]).
 
 By default, the WebSocket protocol uses compression to optimize for speed and bandwidth utilization.
 The level of compression is set on Sync Gateway and can be tuned in the configuration file (xref:sync-gateway:ROOT:refer/config-properties.adoc#replicator_compression[`replicator_compression`]).
@@ -1105,7 +1191,7 @@ For the 3.02. release, changes have been made to the way certificates on the hos
 [horizontal]
 
 Prior to CBL3.0.2:: The pinned certificate was only compared with the leaf certificate of the host. This is not always suitable as leaf certificates are usually valid for shorter periods of time.
-CBL-3.0.2{plus}:: The pinned certificate will be compared against any certificate in the server's certificate chain.
+CBL-3.0.2{plus}:: The pinned certificate will be compared against any certificate in the server's' certificate chain.
 
 
 The following steps describe how to configure certificate pinning between Couchbase Lite and Sync Gateway.

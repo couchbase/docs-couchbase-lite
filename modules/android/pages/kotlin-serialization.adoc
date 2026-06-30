@@ -1,0 +1,191 @@
+= Kotlin Serialization
+:page-role:
+:description: Couchbase Lite for Android -- Using native Kotlin serialization to save, retrieve, and query domain model objects
+
+:source-language: Kotlin
+
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:android:document.adoc[Documents] | xref:android:query-n1ql-mobile.adoc[{sqlpp} for Mobile] | xref:android:query-resultsets.adoc[Query Resultsets]
+--
+
+Couchbase Lite 3.4 for Android adds native support for `kotlinx.serialization`, allowing you to read and write domain model objects directly without manual field-by-field mapping.
+
+[#define-document-model]
+== Define a Document Model
+
+A model class must implement `DocumentModel` and be annotated with `@Serializable`.
+The `documentMeta` property is managed by Couchbase Lite and must be marked `@Transient`.
+
+[#ex-kotlin-ser-model]
+.Document model
+====
+[source, Kotlin]
+----
+import com.couchbase.lite.DocumentMeta
+import com.couchbase.lite.DocumentModel
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+
+@Serializable
+data class Profile(
+    var name: String,
+    var email: String,
+    var city: String? = null,
+    var interests: List<String> = emptyList()
+) : DocumentModel {
+    @Transient
+    override var documentMeta: DocumentMeta? = null
+}
+----
+====
+
+[#save-document-model]
+== Save a Document Model
+
+Use `Collection.save()` with an optional document ID to save a model instance.
+After saving, Couchbase Lite populates `documentMeta` with the document ID and revision.
+
+[#ex-kotlin-ser-save]
+.Save a model
+====
+[source, Kotlin]
+----
+val profile = Profile(
+    name = "Jane Doe",
+    email = "jane@email.com",
+    city = "San Francisco",
+    interests = listOf("photography", "travel")
+)
+
+collection.save(profile, docID = "profile1")
+----
+====
+
+[#get-document-model]
+== Get a Document Model
+
+Use `Collection.getDocumentAs<T>()` to retrieve and deserialize a document by ID.
+Returns `null` if the document does not exist.
+
+
+[#ex-kotlin-ser-get]
+.Get a model
+====
+[source, Kotlin]
+----
+val profile: Profile? =
+    collection.getDocumentAs<Profile>("profile1")
+----
+====
+
+[#decode-query-results]
+== Decode Query Results
+
+Use `ResultSet.data<T>()` to decode query result rows directly into model instances.
+
+[#decode-query-results-column-match]
+=== From Column-Named Results
+
+When the selected column names match your model property names, call `ResultSet.data<T>()` with no alias argument.
+
+
+[#ex-kotlin-ser-query-results]
+.Decode results by column name
+====
+[source, Kotlin]
+----
+val query = db.createQuery(
+    "SELECT name, email, city, interests FROM $collectionName"
+)
+
+val profiles: List<Profile> =
+    query.execute().use { rs ->
+        rs.data<Profile>().toList()
+    }
+----
+====
+
+[#decode-query-results-select-star]
+=== From SELECT * Results
+
+When querying with `SELECT * AS <alias>`, pass the alias to `ResultSet.data<T>()` so Couchbase Lite knows which result column to deserialize.
+
+[#ex-kotlin-ser-query-select-star]
+.Decode results from SELECT *
+====
+[source, Kotlin]
+----
+val query = db.createQuery(
+    "SELECT * AS profile FROM $collectionName"
+)
+
+val profiles: List<Profile> =
+    query.execute().use { rs ->
+        rs.data<Profile>("profile").toList()
+    }
+----
+====
+
+[#decode-query-results-with-meta]
+=== With Document Metadata
+
+To retrieve document models that can be modified and saved back to the collection, include `meta() AS <alias>` in the query.
+Pass both the document body alias and the metadata alias to `ResultSet.data<T>()`.
+Couchbase Lite populates `documentMeta` with the document ID and revision.
+
+
+[#ex-kotlin-ser-query-with-meta]
+.Decode results including document metadata
+====
+[source, Kotlin]
+----
+val query = db.createQuery(
+    "SELECT * AS profile, meta() AS meta FROM $collectionName"
+)
+
+val profilesWithMeta: List<Profile> =
+    query.execute().use { rs ->
+        rs.data<Profile>("profile", "meta").toList()
+    }
+----
+====
+
+[#related-content]
+== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+====== {empty}
+.How to . . .
+* xref:android:gs-prereqs.adoc[Prerequisites]
+* xref:android:gs-install.adoc[Install]
+* xref:android:gs-build.adoc[Build and Run]
+
+.
+
+[.column]
+====== {empty}
+.Learn more . . .
+* xref:android:database.adoc[Databases]
+* xref:android:document.adoc[Documents]
+* xref:android:query-n1ql-mobile.adoc[{sqlpp} for Mobile]
+* xref:android:query-resultsets.adoc[Query Resultsets]
+
+.
+
+[.column]
+====== {empty}
+.Dive Deeper . . .
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+.
+
+++++
+</div>
+++++

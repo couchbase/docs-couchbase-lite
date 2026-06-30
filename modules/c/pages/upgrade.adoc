@@ -2,14 +2,10 @@
 :page-aliases:
 :page-role:
 
-
 :source-language: c
 
 :url-api-references-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__
 
-
-// The admonition does not apply to C as it references upgrading from versions 2.x.
-// CBL-C started at version 3.0
 
 [IMPORTANT]
 --
@@ -17,26 +13,29 @@ On upgrading from a 2.x release, all Couchbase Lite databases automatically re-i
 This can result in a delay before the database is usable.
 --
 
-[#4-0-0-upgrade]
+[#4-1-0-upgrade]
 == {major}.{minor}.{base}{empty} Upgrade
+
+Couchbase Lite {major}.{minor} is a non-breaking upgrade from 4.0.
+Update your Couchbase Lite dependency to {major}.{minor} -- no API or configuration changes are required.
+
+[#4-0-0-upgrade]
+== 4.0.0 Upgrade
 
 Couchbase Lite 4.0 introduces significant architectural changes, most notably the migration from revision trees to version vectors for document versioning.
 This upgrade requires understanding of the compatibility requirements.
 
 The action takes place automatically and can lead to some delay in the database becoming available for use in your application.
 
-In addition, if you're syncing with a {major}.{minor}.{base}{empty} Sync Gateway, you should be aware of the significant configuration enhancements introduced and their effects.
+In addition, if you're syncing with a 4.0 Sync Gateway, you should be aware of the significant configuration enhancements introduced and their effects.
 See xref:sync-gateway::upgrading.adoc[Upgrading Sync Gateway] for more details.
 This is a one-way conversion.
 
-// All API and other listed changes included in the other platforms do not apply to CBL-C for the following reasons
-// The changes apply to pre 3.x versions (CBL-C started at 3.0)
-// Or they relate to Querybuilder functionality - CBL-C doesn't have Querybuilder.
 
-=== Major Changes in {major}.{minor}.{base}{empty}
+=== Major Changes in 4.0.0
 
 **Version Vector Architecture**:
-CBL {major}.{minor}.{base}{empty} replaces the revision tree system with version vectors, providing improved performance, scalability, and conflict resolution.
+CBL 4.0 replaces the revision tree system with version vectors, providing improved performance, scalability, and conflict resolution.
 Documents now use version-based revision IDs in the format `<timestamp>@<source-id>` instead of the previous `<generation>-<document-hash>` format.
 
 **Enhanced Conflict Resolution**: The default conflict resolution strategy changes from `most active wins` to `last write wins` based on hybrid logical timestamps, providing more intuitive and predictable conflict resolution behavior.
@@ -48,20 +47,20 @@ Access to document timestamps is available through the `c4rev_getTimestamp()` fu
 === Database Compatibility
 
 **Automatic Upgrade from 3.x**:
-CBL {major}.{minor}.{base}{empty} databases are compatible with CBL 3.1 and 3.2 databases.
-When opening a 3.1 or 3.2 database with CBL {major}.{minor}.{base}{empty}, documents are automatically upgraded to use version vectors when they're updated and saved.
+CBL 4.0 databases are compatible with CBL 3.1 and 3.2 databases.
+When opening a 3.1 or 3.2 database with CBL 4.0, documents are automatically upgraded to use version vectors when they're updated and saved.
 
 **No Configuration Required**:
-CBL {major}.{minor}.{base}{empty} enables version vectors by default - the feature requires no API configuration.
+CBL 4.0 enables version vectors by default - the feature requires no API configuration.
 
 [#synchronization-compatibility-40]
 === Synchronization Compatibility
 
 **Sync Gateway Requirements**:
-CBL {major}.{minor}.{base}{empty} requires Sync Gateway 4.x or later for synchronization.
+CBL 4.0 requires Sync Gateway 4.x or later for synchronization.
 Attempting to sync with Sync Gateway versions prior to 4.x results in replication errors with appropriate error messages indicating the incompatibility.
 
-**Peer-to-Peer Compatibility**: CBL {major}.{minor}.{base}{empty} can only perform peer-to-peer synchronization with other CBL 4.x instances using either `CBLURLEndpointListener` or `CBLMessageEndpointListener`.
+**Peer-to-Peer Compatibility**: CBL 4.0 can only perform peer-to-peer synchronization with other CBL 4.x instances using either `CBLURLEndpointListener` or `CBLMessageEndpointListener`.
 Sync attempts with CBL 3.x peers fail with appropriate error messages.
 
 [#replication-compatibility]
@@ -103,7 +102,6 @@ Users can downgrade between different patch versions within the same minor relea
 
 For example, if you're running CBL 3.1.6 you can downgrade to CBL 3.1.4 or CBL 3.1.3 without issues.
 
-// Include standard footer
 
 [#related-content]
 == Related Content

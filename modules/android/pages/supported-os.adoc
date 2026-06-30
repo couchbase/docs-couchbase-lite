@@ -1,15 +1,9 @@
-
 = Supported Operating System Versions
 :page-aliases: product/java-android-supported-os.adoc
 :page-role: -toc
 :description: Couchbase Lite on Android -- the OS and SDK versions on which this framework is supported
 
-
-:source-language: Java
-
-
 :source-language: Kotlin
-
 
 [abstract]
 --
@@ -28,12 +22,11 @@ If you're developing with the *C/{cpp} SDK* on Android, the minimum API Level is
 For C/{cpp} SDK requirements, see xref:c:supported-os.adoc#android[Couchbase Lite for C - Android Requirements].
 --
 
-The operating systems listed in xref:android:supported-os.adoc#supported-os-versions[] are certified Android versions.
+The operating systems listed in <<supported-os-versions>> are certified Android versions.
 Couchbase does not test against, nor guarantee support for, uncertified Android versions such as versions built from source.
 
 .Supported versions
-[#supported-os-versions]
-[%autowidth.stretch#supported-os-versions]
+[#supported-os-versions%autowidth.stretch]
 |===
 |Platform |Runtime architectures |Minimum API Level
 
@@ -54,4 +47,33 @@ Couchbase does not test against, nor guarantee support for, uncertified Android 
 |24
 |===
 
+[#bluetooth-transport-requirements]
+== Bluetooth Transport Requirements
 
+[NOTE]
+--
+Bluetooth Low Energy (BLE) transport for the Multipeer Replicator requires *Android API 29 (Android 10) or later*, due to the availability of BLE L2CAP support on that API level.
+
+Devices running API 24--28 can still use Couchbase Lite with all non-Bluetooth features, including Wi-Fi-based Multipeer replication.
+If your application targets API 24--28, do not include `.bluetooth` in your `MultipeerReplicatorConfiguration.transports` set.
+--
+
+[#feature-requirements]
+== Feature Requirements
+
+Some features require a greater minimum API level than the general CBL requirement.
+
+.Multipeer Replicator API level requirements
+[#multipeer-api-requirements%autowidth.stretch]
+|===
+|Feature |Minimum Android API |Notes
+
+|Multipeer Replicator: Wi-Fi transport
+|API 24
+|Peers must connect to the same Wi-Fi network.
+
+|Multipeer Replicator: Bluetooth Low Energy transport
+|API 29
+|Requires additional manifest permissions and runtime permission requests.
+See xref:android:p2psync-multipeer.adoc#bluetooth-platform-configuration[Bluetooth Platform Configuration].
+|===

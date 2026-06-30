@@ -682,7 +682,7 @@ Users may lose access to channels in a number of ways:
 
 * A channel is removed from a role the user is assigned to
 
-By default, when a user loses access to a channel, the next Couchbase Lite Pull replication auto-purges all documents in the channel from local Couchbase Lite databases (on devices belonging to the user) *unless* they belong to any of the user's other channels -- see: xref:objc:replication.adoc#tbl-revoke-behavior[].
+By default, when a user loses access to a channel, the next Couchbase Lite Pull replication auto-purges all documents in the channel from local Couchbase Lite databases (on devices belonging to the user) *unless* they belong to any of the user's' other channels -- see: xref:objc:replication.adoc#tbl-revoke-behavior[].
 
 Documents that exist in multiple channels belonging to the user (even if they are not actively replicating that channel) are not auto-purged unless the user loses access to all channels.
 
@@ -898,7 +898,7 @@ include::objc:example$code_snippets/SampleCodeTest.m[tags="replication-reset-che
 
 ====
 
-<.> Set start's reset option to `true`. +
+<.> Set start's' reset option to `true`. +
 The default `false` is shown here for completeness only; it is unlikely you would explicitly use it in practice.
 
 
@@ -910,9 +910,10 @@ In this section::
 xref:objc:replication.adoc#lbl-repl-chng[]  |
 xref:objc:replication.adoc#lbl-repl-status[]  |
 xref:objc:replication.adoc#lbl-repl-evnts[] |
-xref:objc:replication.adoc#lbl-repl-pend[]
+xref:objc:replication.adoc#lbl-repl-pend[] |
+xref:objc:replication.adoc#lbl-repl-correlation-id[]
 
-You can monitor a replication's status by using a combination of xref:objc:replication.adoc#lbl-repl-chng[] and the `replication.status.activity` property -- see; https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorStatus.html#/c:objc(cs)CBLReplicatorStatus(py)activity[activity enum].
+You can monitor a replication's' status by using a combination of xref:objc:replication.adoc#lbl-repl-chng[] and the `replication.status.activity` property -- see; https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorStatus.html#/c:objc(cs)CBLReplicatorStatus(py)activity[activity enum].
 This enables you to know, for example, when the replication is actively transferring data and when it has stopped.
 
 You can also choose to monitor document changes -- see: xref:objc:replication.adoc#lbl-repl-evnts[].
@@ -923,7 +924,7 @@ Use this to monitor changes and to inform on sync progress; this is an optional 
 You can add and a replicator change listener at any point; it will report changes from the point it is registered.
 
 .Best Practice
-TIP: Don't forget to save the token so you can remove the listener later
+TIP: Don't' forget to save the token so you can remove the listener later
 
 Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicator.html[Replicator] class to add a change listener as a callback to the Replicator (https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicator.html#/c:objc(cs)CBLReplicator(im)addChangeListener:[addChangeListener(_:)]) -- see: xref:objc:replication.adoc#ex-repl-mon[].
 You will then be asynchronously notified of state changes.
@@ -1123,6 +1124,33 @@ include::objc:example$code_snippets/SampleCodeTest.m[tags="replication-pendingdo
 This is a snapshot and may have changed by the time the response is received and processed.
 <.> https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicator.html#/c:objc(cs)CBLReplicator(im)isDocumentPending:error:[CBLReplicator.isDocumentPending()] returns `true` if the document is waiting to be pushed, and `false` otherwise.
 
+[#lbl-repl-correlation-id]
+=== Correlation ID
+The correlation ID is a read-only property that identifies the Sync Gateway session associated with a Couchbase Lite replicator.
+Use it to correlate log entries on the client and server when diagnosing replication issues.
+[#ex-repl-correlation-id]
+.Get the replicator correlation ID
+====
+[source, objc]
+----
+NSString *correlationID = replicator.correlationID;
+----
+====
+
+[#lbl-repl-correlation-id]
+=== Correlation ID
+
+The correlation ID is a read-only property that identifies the Sync Gateway session associated with a Couchbase Lite replicator.
+Use it to correlate log entries on the client and server when diagnosing replication issues.
+
+[#ex-repl-correlation-id]
+.Get the replicator correlation ID
+====
+[source, objc]
+----
+NSString* correlationID = replicator.correlationID;
+----
+====
 
 [#lbl-repl-stop]
 == Stop

@@ -1,4 +1,3 @@
-
 = Handling Data Conflicts
 :page-aliases: clang:conflict.adoc
 :page-role:
@@ -64,10 +63,10 @@ Couchbase Lite uses the following rules to handle conflicts such as those descri
 
 * If one of the changes is a deletion:
 +
-A deleted document (that is, a _tombstone_) always wins over a document update.
+A deleted document (that's, a _tombstone_) always wins over a document update.
 * If both changes are document changes:
 +
-The change with the most revisions will win.
+The change with the most revisions wins.
 +
 Since each change creates a revision with an ID prefixed by an incremented version number, the winner is the change with the highest version number.
 
@@ -102,10 +101,9 @@ Apps have the following strategies for resolving conflicts:
 .Using conflict resolvers
 ====
 
-[tabs]
+[{tabs}]
 =====
-
-Local Wins::
+Local Wins (C)::
 +
 --
 [source, c]
@@ -114,30 +112,91 @@ include::c:example$code_snippets/main.cpp[tag=local-win-conflict-resolver,indent
 ----
 --
 
+Local Wins (C++)::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=local-win-conflict-resolver,indent=0]
+----
+--
+
+Remote Wins (C)::
++
+--
+[source, c]
+----
+include::c:example$code_snippets/main.cpp[tags=remote-win-conflict-resolver,indent=0]
+----
+--
+
+Remote Wins (C++)::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=remote-win-conflict-resolver,indent=0]
+----
+--
+
+Merge (C)::
++
+--
+[source, c]
+----
+include::c:example$code_snippets/main.cpp[tags=merge-conflict-resolver,indent=0]
+----
+--
+
+Merge (C++)::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=merge-conflict-resolver,indent=0]
+----
+--
+
+======
+--
+
+{cpp}::
++
+--
+[tabs]
+======
+
+Local Wins::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets/cbl_cpp.cpp[tag=local-win-conflict-resolver,indent=0]
+----
+--
 
 Remote Wins::
 +
 --
-[source, c]
+[source, cpp]
 ----
-include::c:example$code_snippets/main.cpp[tag=remote-win-conflict-resolver,indent=0]
+include::c:example$code_snippets/cbl_cpp.cpp[tag=remote-win-conflict-resolver,indent=0]
 ----
-
 --
-
 
 Merge::
 +
 --
-
-[source, c]
+[source, cpp]
 ----
-include::c:example$code_snippets/main.cpp[tag=merge-conflict-resolver,indent=0]
+include::c:example$code_snippets/cbl_cpp.cpp[tag=merge-conflict-resolver,indent=0]
 ----
-
 --
-=====
 
+======
+--
+
+=====
 ====
 // end::handling-conflicts-conflict-resolvers[]
 
@@ -179,17 +238,28 @@ When the value is `null`, the default conflict resolution will be applied.
 .A Conflict Resolver
 [#wx-conflict-resolver]
 
-
 [#wx-conflict-resolver]
 ====
-
-
+[{tabs}]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="replication-conflict-resolver", indent=0]
 ----
+--
 
-
+C++::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=replication-conflict-resolver,indent=0]
+----
+--
+=====
 ====
 
 
@@ -198,14 +268,14 @@ include::c:example$code_snippets/main.cpp[tags="replication-conflict-resolver", 
 
 
 When updating a document, you need to consider the possibility of update conflicts.
-Update conflicts can occur when you try to update a document that’s been updated since you read it.
+Update conflicts can occur when you try to update a document that's been updated since you read it.
 
 
 .How Updating May Cause Conflicts
 ====
 Here's a typical sequence of events that would create an update conflict:
 
-. Your code reads the document's current properties, and constructs a modified copy to save.
+. Your code reads the document's' current properties, and constructs a modified copy to save.
 . Another thread (perhaps the replicator) updates the document, creating a new revision with different properties.
 . Your code updates the document with its modified properties, for example using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__documents.html#[CBLDatabase_SaveDocument()].
 ====
@@ -227,7 +297,7 @@ https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchba
 The concurrency control parameter has two possible values:
 
 * `lastWriteWins` (default): The last operation wins if there is a conflict.
-* `failOnConflict`: The operation will fail if there is a conflict.
+* `failOnConflict`: The operation fails if there is a conflict.
 +
 In this case, the app can detect the error that is being thrown, and handle it by re-reading the document, making the necessary conflict resolution, then trying again.
 
@@ -257,17 +327,28 @@ In the event of conflicting keys, it will pick the key value from `new`.
 .Merging document properties
 [#ex-merge-props]
 
-
 [#ex-merge-props]
 ====
-
-
+[{tabs}]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="update-document-with-conflict-handler", indent=0]
 ----
+--
 
-
+C++::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=update-document-with-conflict-handler,indent=0]
+----
+--
+=====
 ====
 
 
@@ -313,5 +394,3 @@ xref:tutorials:cbl-p2p-sync-websockets:swift/cbl-p2p-sync-websockets.adoc[Gettin
 ++++
 </div>
 ++++
-
-
