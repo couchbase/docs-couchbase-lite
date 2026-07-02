@@ -27,6 +27,29 @@ static void stop_replicator(CBLReplicator* replicator) {
     CBLReplicator_Release(replicator);
 }
 
+static void old_console_logging() {
+    // tag::console-logging[]
+    CBLLog_SetConsoleLevel(kCBLLogVerbose);
+    // end::console-logging[]
+}
+
+static void old_file_logging() {
+    // tag::file-logging[]
+    // NOTE: No error handling, for brevity (see getting started)
+    // NOTE: You will need to use a platform appropriate method for finding
+    // a temporary directory
+    CBLLogFileConfiguration config = {}; // Don't bother zeroing, since we set all properties
+    config.level = kCBLLogInfo;
+    config.directory = FLSTR("/tmp/logs");
+    config.maxRotateCount = 12;
+    config.maxSize = 1048576;
+    config.usePlaintext = false;
+
+    CBLError err = {};
+    CBLLog_SetFileConfig(config, &err);
+    // end::file-logging[]
+}
+
 //  BEGIN lower-level function declarations
 
 //  DOCS NOTE --
@@ -1719,6 +1742,12 @@ static void custom_log_sink_callback(CBLLogDomain domain, CBLLogLevel level, FLS
     // handle the message, for example piping it to a third party framework.
 }
 // end::new-custom-logging[]
+
+static void old_set_custom_logging() {
+    // tag::set-custom-logging[]
+    CBLLog_SetCallback(custom_log_callback);
+    // end::set-custom-logging[]
+}
 
 static void enable_custom_log_sink() {
     // tag::set-new-custom-logging[]
