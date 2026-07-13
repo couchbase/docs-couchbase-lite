@@ -36,7 +36,7 @@ static void old_console_logging() {
 static void old_file_logging() {
     // tag::file-logging[]
     // NOTE: No error handling, for brevity (see getting started)
-    // NOTE: You will need to use a platform appropriate method for finding
+    // NOTE: Use a platform-appropriate method to find a temporary directory
     // a temporary directory
     CBLLogFileConfiguration config = {}; // Don't bother zeroing, since we set all properties
     config.level = kCBLLogInfo;
