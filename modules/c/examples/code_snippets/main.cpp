@@ -37,7 +37,7 @@ static void old_file_logging() {
     // tag::file-logging[]
     // NOTE: No error handling, for brevity (see getting started)
     // NOTE: Use a platform-appropriate method to find a temporary directory
-    // a temporary directory
+ 
     CBLLogFileConfiguration config = {}; // Don't bother zeroing, since we set all properties
     config.level = kCBLLogInfo;
     config.directory = FLSTR("/tmp/logs");
