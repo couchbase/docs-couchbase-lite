@@ -79,31 +79,13 @@ For greater flexibility you can implement a custom logging class.
 The changes necessary convert the installation of a console logger from the old to the new API are minimal.
 Create an instance of `ConsoleLogSink` initialized with the desired log level and domains and install it.
 
-
 .Old API
 ====
-[tabs]
-=====
-C::
-+
---
 [source.no-callouts, c, indent=0]
 ----
 include::c:example$code_snippets/main.cpp[tags=console-logging]
 ----
---
-
-{cpp}::
-+
---
-[source.no-callouts, cpp, indent=0]
-----
-include::c:example$code_snippets/cbl_cpp.cpp[tags=console-logging]
-----
---
-=====
 ====
-
 
 .New API
 [{tabs}]
@@ -139,26 +121,10 @@ NOTE: `setRotateCount` from the old API is slightly different from `setMaxKeptFi
 
 .Old API
 ====
-[tabs]
-=====
-C::
-+
---
 [source.no-callouts, c, indent=0]
 ----
 include::c:example$code_snippets/main.cpp[tags=file-logging]
 ----
---
-
-{cpp}::
-+
---
-[source.no-callouts, cpp, indent=0]
-----
-include::c:example$code_snippets/cbl_cpp.cpp[tags=file-logging]
-----
---
-=====
 ====
 
 .New API
@@ -205,29 +171,12 @@ IMPORTANT: With the new API, customer code can no longer log, directly, to any o
 The Console and File log sinks cannot be subclassed and do not publish methods that allow writing logs.
 If you need to log to the console for example, you'll have to create your own way of doing so.
 
-
 .Old API
 ====
-[tabs]
-=====
-C::
-+
---
 [source.no-callouts, c, indent=0]
 ----
 include::c:example$code_snippets/main.cpp[tags=custom-logging;set-custom-logging]
 ----
---
-
-{cpp}::
-+
---
-[source.no-callouts, cpp, indent=0]
-----
-include::c:example$code_snippets/cbl_cpp.cpp[tags=custom-logging;set-custom-logging]
-----
---
-=====
 ====
 
 .New API
@@ -250,15 +199,4 @@ C++::
 include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=new-custom-logging;set-new-custom-logging]
 ----
 --
-====
-
-{cpp}::
-+
---
-[source.no-callouts, cpp, indent=0]
-----
-include::c:example$code_snippets/cbl_cpp.cpp[tags=new-custom-logging;set-new-custom-logging]
-----
---
-=====
 ====
