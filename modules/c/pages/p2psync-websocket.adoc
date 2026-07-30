@@ -148,6 +148,11 @@ C::
 ----
 include::c:example$code_snippets/main.cpp[tags="listener-simple", indent=0]
 ----
+
+. Initialize the Listener configuration @/CBLURLEndpointListenerConfiguration config/
+. Configure the client authenticator to require basic authentication @/config.authenticator/
+. Initialize the Listener @/CBLURLEndpointListener_Create/
+. Start the Listener @/CBLURLEndpointListener_Start/
 --
 
 {cpp}::
@@ -155,17 +160,12 @@ include::c:example$code_snippets/main.cpp[tags="listener-simple", indent=0]
 --
 [source, cpp]
 ----
-include::c:example$code_snippets/cbl_cpp.cpp[tags="listener-simple", indent=0]
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags="listener-simple", indent=0]
 ----
 --
 =====
 
 ====
-
-. Initialize the Listener configuration @/CBLURLEndpointListenerConfiguration config/
-. Configure the client authenticator to require basic authentication @/config.authenticator/
-. Initialize the Listener @/CBLURLEndpointListener_Create/
-. Start the Listener @/CBLURLEndpointListener_Start/
 
 
 .Simple Replicator
@@ -180,6 +180,14 @@ C::
 ----
 include::c:example$code_snippets/main.cpp[tags="replicator-simple", indent=0]
 ----
+
+. Get the Listener's' endpoint.
+Here we use a known URL, but it could be a URL established dynamically in a discovery phase. @/replConfig.endpoint/
+. Initialize the replicator configuration with the database to be synchronized and the Listener it is to synchronize with. @/replConfig.collections/
+. Configure the replicator to expect a self-signed certificate from the Listener. @/replConfig.acceptOnlySelfSignedServerCertificate/
+. Configure the replicator to present basic authentication credentials if the Listener prompts for them -- client authentication is optional. @/replConfig.authenticator/
+. Initialize the replicator @/CBLReplicator_Create/
+. Start the replicator @/CBLReplicator_Start/
 --
 
 C++::
@@ -192,14 +200,6 @@ include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=replicator-simple,indent=0
 --
 =====
 ====
-
-. Get the Listener's' endpoint.
-Here we use a known URL, but it could be a URL established dynamically in a discovery phase. @/replConfig.endpoint/
-. Initialize the replicator configuration with the database to be synchronized and the Listener it is to synchronize with. @/replConfig.collections/
-. Configure the replicator to expect a self-signed certificate from the Listener. @/replConfig.acceptOnlySelfSignedServerCertificate/
-. Configure the replicator to present basic authentication credentials if the Listener prompts for them -- client authentication is optional. @/replConfig.authenticator/
-. Initialize the replicator @/CBLReplicator_Create/
-. Start the replicator @/CBLReplicator_Start/
 
 
 [#api-highlights]

@@ -93,6 +93,12 @@ C::
 ----
 include::c:example$code_snippets/main.cpp[tags="listener-initialize", indent=0]
 ----
+
+. Here we show the default TLS authentication, which is an anonymous self-signed certificate.
+The server must always authenticate itself to the client. @/config.tlsIdentity/
+
+. Here we show how basic authentication is configured to authenticate the client-supplied credentials from the http authentication header against valid credentials -- see <<lbl-authenticating-the-client>> for more options.
+Note that client authentication is optional. @/config.authenticator/
 --
 
 {cpp}::
@@ -100,18 +106,12 @@ include::c:example$code_snippets/main.cpp[tags="listener-initialize", indent=0]
 --
 [source, cpp]
 ----
-include::c:example$code_snippets/cbl_cpp.cpp[tags="listener-initialize", indent=0]
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags="listener-initialize", indent=0]
 ----
 --
 =====
 
 ====
-
-. Here we show the default TLS authentication, which is an anonymous self-signed certificate.
-The server must always authenticate itself to the client. @/config.tlsIdentity/
-
-. Here we show how basic authentication is configured to authenticate the client-supplied credentials from the http authentication header against valid credentials -- see <<lbl-authenticating-the-client>> for more options.
-Note that client authentication is optional. @/config.authenticator/
 
 
 [#api-references]
@@ -155,7 +155,7 @@ include::c:example$code_snippets/main.cpp[tags="listener-config-db", indent=0]
 --
 [source, cpp]
 ----
-include::c:example$code_snippets/cbl_cpp.cpp[tags="listener-config-db", indent=0]
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags="listener-config-db", indent=0]
 ----
 --
 =====
@@ -193,7 +193,7 @@ include::c:example$code_snippets/main.cpp[tags="listener-config-port", indent=0]
 --
 [source, cpp]
 ----
-include::c:example$code_snippets/cbl_cpp.cpp[tags="listener-config-port", indent=0]
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags="listener-config-port", indent=0]
 ----
 --
 =====
@@ -230,7 +230,7 @@ include::c:example$code_snippets/main.cpp[tags="listener-config-netw-iface", ind
 --
 [source, cpp]
 ----
-include::c:example$code_snippets/cbl_cpp.cpp[tags="listener-config-netw-iface", indent=0]
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags="listener-config-netw-iface", indent=0]
 ----
 --
 =====
@@ -270,7 +270,7 @@ include::c:example$code_snippets/main.cpp[tags="listener-config-delta-sync", ind
 --
 [source, cpp]
 ----
-include::c:example$code_snippets/cbl_cpp.cpp[tags="listener-config-delta-sync", indent=0]
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags="listener-config-delta-sync", indent=0]
 ----
 --
 =====
@@ -461,6 +461,11 @@ C::
 ----
 include::c:example$code_snippets/main.cpp[tags="listener-config-tls-enable;listener-config-tls-id-anon", indent=0]
 ----
+
+. Ensure TLS is used.
+This is the default setting. @/config.disableTLS/
+. Authenticate using an anonymous self-signed certificate.
+This is the default setting. @/config.tlsIdentity/
 --
 
 {cpp}::
@@ -468,18 +473,12 @@ include::c:example$code_snippets/main.cpp[tags="listener-config-tls-enable;liste
 --
 [source, cpp]
 ----
-include::c:example$code_snippets/cbl_cpp.cpp[tags="listener-config-tls-enable;listener-config-tls-id-anon", indent=0]
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags="listener-config-tls-enable;listener-config-tls-id-anon", indent=0]
 ----
 --
 =====
 
 ====
-
-
-. Ensure TLS is used.
-This is the default setting. @/config.disableTLS/
-. Authenticate using an anonymous self-signed certificate.
-This is the default setting. @/config.tlsIdentity/
 
 .Use External Key Callbacks
 [#ex-external-key-callbacks]
@@ -580,7 +579,7 @@ include::c:example$code_snippets/main.cpp[tags="listener-config-client-auth-pwd"
 --
 [source, cpp]
 ----
-include::c:example$code_snippets/cbl_cpp.cpp[tags="listener-config-client-auth-pwd", indent=0]
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags="listener-config-client-auth-pwd", indent=0]
 ----
 --
 =====
@@ -624,6 +623,12 @@ C::
 ----
 include::c:example$code_snippets/main.cpp[tags="listener-config-client-auth-root", indent=0]
 ----
+
+. Get the identity data to authenticate against.
+This can be, for example, from a resource file provided with the app, or an identity previously saved in secure storage. @/CBLCert_CreateWithData/
+. Configure the authenticator to authenticate the client supplied certificate(s) using these root certs.
+A valid client will provide one or more certificates that match a certificate in this list. @/CBLListenerAuth_CreateCertificateWithRootCerts/
+. Add the authenticator to the Listener configuration. @/config.authenticator/
 --
 
 {cpp}::
@@ -631,18 +636,12 @@ include::c:example$code_snippets/main.cpp[tags="listener-config-client-auth-root
 --
 [source, cpp]
 ----
-include::c:example$code_snippets/cbl_cpp.cpp[tags="listener-config-client-auth-root", indent=0]
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags="listener-config-client-auth-root", indent=0]
 ----
 --
 =====
 
 ====
-
-. Get the identity data to authenticate against.
-This can be, for example, from a resource file provided with the app, or an identity previously saved in secure storage. @/CBLCert_CreateWithData/
-. Configure the authenticator to authenticate the client supplied certificate(s) using these root certs.
-A valid client will provide one or more certificates that match a certificate in this list. @/CBLListenerAuth_CreateCertificateWithRootCerts/
-. Add the authenticator to the Listener configuration. @/config.authenticator/
 
 
 .Application Logic
@@ -660,17 +659,6 @@ C::
 ----
 include::c:example$code_snippets/main.cpp[tags="listener-config-client-auth-lambda", indent=0]
 ----
---
-
-{cpp}::
-+
---
-[source, cpp]
-----
-include::c:example$code_snippets/cbl_cpp.cpp[tags="listener-config-client-auth-lambda", indent=0]
-----
---
-=====
 
 ////
 <.>  Get the identity data to authenticate against.
@@ -680,6 +668,17 @@ This can be, for example, from a resource file provided with the app, or an iden
 This code assumes complete responsibility for authenticating the client supplied certificate(s).
 It must return a boolean value; with `true` denoting the client supplied certificate authentic. @/authenticateClientCert/
 . Add the authenticator to the Listener configuration. @/config.authenticator/
+--
+
+{cpp}::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags="listener-config-client-auth-lambda", indent=0]
+----
+--
+=====
 
 ====
 
@@ -710,7 +709,7 @@ include::c:example$code_snippets/main.cpp[tags="p2psync-act-tlsid-delete", inden
 --
 [source, cpp]
 ----
-include::c:example$code_snippets/cbl_cpp.cpp[tags="p2psync-act-tlsid-delete", indent=0]
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags="p2psync-act-tlsid-delete", indent=0]
 ----
 --
 =====
@@ -779,7 +778,7 @@ include::c:example$code_snippets/main.cpp[tags="listener-start", indent=0]
 --
 [source, cpp]
 ----
-include::c:example$code_snippets/cbl_cpp.cpp[tags="listener-start", indent=0]
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags="listener-start", indent=0]
 ----
 --
 =====
@@ -816,7 +815,7 @@ include::c:example$code_snippets/main.cpp[tags="listener-status-check", indent=0
 --
 [source, cpp]
 ----
-include::c:example$code_snippets/cbl_cpp.cpp[tags="listener-status-check", indent=0]
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags="listener-status-check", indent=0]
 ----
 --
 =====
@@ -851,7 +850,7 @@ include::c:example$code_snippets/main.cpp[tags="listener-stop", indent=0]
 --
 [source, cpp]
 ----
-include::c:example$code_snippets/cbl_cpp.cpp[tags="listener-stop", indent=0]
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags="listener-stop", indent=0]
 ----
 --
 =====
