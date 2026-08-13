@@ -29,7 +29,7 @@ For experienced developers, this is all you need to add _Couchbase Lite for {par
 
 * Enterprise Edition -- `Couchbase.Lite.Enterprise` package for {version-full}
 
-. Within your app, include a call the relevant `Activate()` function inside of the class that is included in the support assembly.
+. Within your Android app, include a call to the relevant `Activate()` function inside of the class that is included in the support assembly, passing in a `context` argument (typically the `ApplicationContext` property on your app class).
 ****
 
 That's it! +
@@ -65,14 +65,19 @@ NOTE: Versions that are not the same are incompatible with each other -- see:
 https://www.couchbase.com/products/editions[Comparative Table]
 
 
-== Activating
+== Activating (on Android platform only)
 
-Within your app, include a call the relevant `Activate()` function inside of the class that is included in the support assembly.
+Couchbase Lite must be activated before any other calls can be made. +
+Within your Android app, include a call to the relevant `Activate()` function inside of the class that is included in the support assembly.
 
 There is only one public class in each support assembly, and the support assembly itself is a nuget dependency.
 
-For example, UWP looks like: +
-`Couchbase.Lite.Support.UWP.Activate()`
+On Android, this method takes a `context` argument -- typically the `ApplicationContext` property on your app class.
+
+For example: +
+`Couchbase.Lite.Support.Android.Activate(this.ApplicationContext)`
+
+The `Activate()` function is required for applications using .NET on the Android platform only. It is not required, and the function does not exist, for iOS or UWP.
 
 Currently the support assemblies provide dependency injected mechanisms for default directory logic, and platform specific logging (So, C# will log to logcat with correct log levels and tags. No more "mono-stdout" always at info level.)
 
