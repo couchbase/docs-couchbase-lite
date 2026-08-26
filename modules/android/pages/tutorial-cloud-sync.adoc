@@ -1,0 +1,191 @@
+= Add Cloud Sync
+:page-role:
+:description: Sync your Couchbase Lite app to Capella App Services and keep working offline
+:keywords: edge nosql api android kotlin sync replication offline
+
+
+[abstract]
+--
+Description -- _{description}_ +
+_Abstract -- Add a replicator to the app you built in the Quick Start, sync it to Capella App Services, then take the device offline, keep writing, and watch the changes reach the cloud when you reconnect._
+--
+
+You take the local app from the xref:android:gs-five-minutes.adoc[Quick Start] and connect it to Couchbase Capella App Services.
+By the end, the app writes to a local database, syncs those writes to the cloud, and carries on working with no network at all.
+
+== Prerequisites
+
+* The working app from the xref:android:gs-five-minutes.adoc[Quick Start]
+* A Capella App Services deployment with a configured App Endpoint, an App User, and its public connection URL. See xref:app-services:get-started/configuring-app-services.adoc[Configure Your Free Tier App Services].
+
+[IMPORTANT]
+====
+Your App Endpoint must expose a scope and collection whose names match the ones in your app.
+The Quick Start uses the scope `inventory` and the collection `hotels`.
+Either configure your App Endpoint with the same names, or change the names in your app to match your endpoint.
+Replication fails if the collection does not exist at both ends.
+====
+
+You need 3 values from your App Endpoint before you start:
+
+[cols="1,3"]
+|===
+|Value |Where to find it
+
+|Public connection URL
+|The *Connect* tab of your App Endpoint. It looks like `wss://<id>.apps.cloud.couchbase.com:4984`
+
+|App Endpoint name
+|The name you gave the endpoint when you created it
+
+|App User credentials
+|The *App Users* tab of your App Endpoint
+|===
+
+== Step 1: Add a Way to Create Documents
+
+The Quick Start saved one document at launch.
+To watch sync happen, you need to write documents while the app runs.
+
+Replace the contents of `MainActivity.kt` with the following, then fill in your 3 values on the highlighted lines.
+
+[#ex-cloud-sync]
+====
+[source,kotlin]
+----
+package com.couchbase.android.fiveminutes
+
+import android.os.Bundle
+import android.util.Log
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.couchbase.lite.BasicAuthenticator
+import com.couchbase.lite.CouchbaseLite
+import com.couchbase.lite.Database
+import com.couchbase.lite.MutableDocument
+import com.couchbase.lite.Replicator
+import com.couchbase.lite.ReplicatorConfiguration
+import com.couchbase.lite.ReplicatorType
+import com.couchbase.lite.URLEndpoint
+import java.net.URI
+
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        CouchbaseLite.init(this)
+        val database = Database("getting-started")
+        val collection = database.createCollection("hotels", "inventory")
+
+        val hotels = mutableStateOf(emptyList<String>())
+        val syncState = mutableStateOf("Starting")
+
+        val query = database.createQuery(
+            "SELECT name, city FROM inventory.hotels WHERE type = 'hotel'"
+        )
+
+        query.addChangeListener { change -> // <.>
+            hotels.value = change.results?.allResults()?.map {
+                "${it.getString("name")}, ${it.getString("city")}"
+            } ?: emptyList()
+        }
+
+        val target = URLEndpoint(
+            URI("wss://YOUR-ID.apps.cloud.couchbase.com:4984/YOUR-ENDPOINT-NAME") // <.>
+        )
+
+        val config = ReplicatorConfiguration(target)
+        config.addCollection(collection, null) // <.>
+        config.type = ReplicatorType.PUSH_AND_PULL
+        config.isContinuous = true // <.>
+        config.setAuthenticator(
+            BasicAuthenticator("YOUR-APP-USER", "YOUR-PASSWORD".toCharArray()) // <.>
+        )
+
+        val replicator = Replicator(config)
+
+        replicator.addChangeListener { change -> // <.>
+            syncState.value = change.status.activityLevel.toString()
+            change.status.error?.let { Log.e("SYNC", "Replication error", it) }
+        }
+
+        replicator.start()
+
+        setContent {
+            Column(Modifier.fillMaxSize().padding(24.dp)) {
+                Text("Sync: ${syncState.value}")
+                Button(onClick = {
+                    collection.save( // <.>
+                        MutableDocument()
+                            .setString("type", "hotel")
+                            .setString("name", "Hotel ${(100..999).random()}")
+                            .setString("city", "Birmingham")
+                    )
+                }) { Text("Add a hotel") }
+                hotels.value.forEach { hotel -> Text(hotel) }
+            }
+        }
+    }
+}
+----
+<.> Listen for query results instead of reading them once, so the UI updates when documents arrive from the cloud
+<.> Your public connection URL, with your App Endpoint name appended as the path
+<.> Register the collection you want to sync. Passing `null` syncs it with no filters or conflict handler
+<.> Keep the connection open and sync changes as they happen, in both directions
+<.> Your App User credentials
+<.> Report the replicator's activity level so you can see sync state on screen
+<.> Write to the local database. The replicator picks the change up on its own
+====
+
+[CAUTION]
+====
+The credentials above are hard-coded to keep the tutorial short.
+Do not commit credentials to source control, and do not ship them in a released app.
+Load them from your build configuration or a secure store instead.
+====
+
+== Step 2: Run It and Confirm Sync
+
+. Run the app on your emulator or device
+. Tap *Add a hotel* two or three times to show each record from your local database
+. Check the sync state on screen. It moves through `CONNECTING` and `BUSY`, then settles on `IDLE`
+. In Capella, open your App Endpoint and view its documents
+
+
+== Step 3: Go Offline and Keep Working
+
+. Put the device or emulator into airplane mode
+. Tap *Add a hotel* again, twice
+
+The records still appear on screen. Writes go to the local database, and the app does not care that the network is gone.
+The sync state now reports `OFFLINE`.
+
+This is the point of an offline-first app. Nothing failed, nothing queued behind a spinner, and no code handled the outage.
+
+== Step 4: Reconnect and Watch It Sync
+
+. Turn airplane mode off
+
+The sync state returns to `BUSY`, then `IDLE`.
+Check your App Endpoint documents in Capella again. The records you created offline are there.
+
+== What You Built
+
+* A local database that accepts writes with or without a network
+* Continuous two-way replication to Capella App Services
+* A live query that updates your UI when documents arrive from the cloud
+
+== Next Steps
+
+* xref:android:replication.adoc[Remote Sync Gateway] for replication options, filters, and channels
+* xref:android:conflict.adoc[Handling Data Conflicts] for what happens when two devices edit the same document
+* xref:android:query-live.adoc[Live Queries] for the listener you used in this tutorial
+* xref:android:p2psync-multipeer.adoc[Multipeer Peer-to-Peer Replicator] to sync between devices with no cloud at all
