@@ -3,11 +3,14 @@
 :description: Save and query your first document with Couchbase Lite on Android
 :keywords: edge nosql api android kotlin quickstart
 
+// VERIFY BEFORE MERGE: screenshot asset does not exist yet.
+// Add modules/ROOT/assets/images/cbl-5min-android.png before this page builds.
 
 [abstract]
 --
 Description -- _{description}_ +
-_Abstract -- Add Couchbase{nbsp}Lite to a new Android project, save a document, query it with {sqlpp}, and see the result on screen. No server, no account, no credentials._
+_Abstract -- Add Couchbase{nbsp}Lite to a new Android project, save a document, query it with {sqlpp}, and see the result on screen. +
+No server, no account, no credentials._
 --
 
 You build a single-screen Android app that opens a local Couchbase{nbsp}Lite database, saves a document, queries it with {sqlpp} for Mobile, and displays the result.
@@ -16,18 +19,22 @@ Everything runs on the device.
 You do not need a Couchbase Capella account, a cluster, or a Sync Gateway.
 
 
+[#prerequisites]
 == Prerequisites
 
 * Android Studio, current stable release
-* An emulator or device running API level 22 or higher
+* An emulator or device running API level 24 or higher
 * Kotlin and Jetpack Compose, which Android Studio selects by default for a new Empty Activity project
 
 For the full supported platform matrix, see xref:android:gs-prereqs.adoc[Prerequisites].
 
+[#step-1-create-a-project]
 == Step 1: Create a Project
 
-In Android Studio, create a new project using the *Empty Activity* template. Set the minimum SDK to *API 22* or higher.
+In Android Studio, create a new project using the *Empty Activity* template.
+Set the minimum SDK to *API 24* or higher.
 
+[#step-2-add-couchbase-lite]
 == Step 2: Add Couchbase Lite
 
 Add Couchbase{nbsp}Lite to the `dependencies{}` block of your app-level `build.gradle.kts`:
@@ -50,6 +57,7 @@ To use the Enterprise Edition, swap the dependency for `couchbase-lite-android-e
 See xref:android:gs-install.adoc[Install] for the full instructions.
 ====
 
+[#step-3-add-the-code]
 == Step 3: Add the Code
 
 Replace the contents of `MainActivity.kt` with the following:
@@ -58,58 +66,12 @@ Replace the contents of `MainActivity.kt` with the following:
 ====
 [source,kotlin]
 ----
-package com.couchbase.android.fiveminutes
-
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import com.couchbase.lite.CouchbaseLite
-import com.couchbase.lite.Database
-import com.couchbase.lite.MutableDocument
-
-class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        CouchbaseLite.init(this) // <.>
-
-        val database = Database("getting-started") // <.>
-
-        val collection = database.createCollection("hotels", "inventory") // <.>
-
-        collection.save( // <.>
-            MutableDocument()
-                .setString("type", "hotel")
-                .setString("name", "Hotel Couchbase")
-                .setString("city", "Manchester")
-        )
-
-        val query = database.createQuery( // <.>
-            "SELECT name, city FROM inventory.hotels WHERE type = 'hotel'"
-        )
-
-        val hotels = query.execute().allResults().map {
-            "${it.getString("name")}, ${it.getString("city")}"
-        }
-
-        setContent { // <.>
-            Column(Modifier.fillMaxSize().padding(24.dp)) {
-                hotels.forEach { hotel -> Text(hotel) }
-            }
-        }
-    }
-}
+include::example$QuickStartKotlin/app/src/main/java/com/couchbase/android/quickstart/MainActivity.kt[tag="quickstart"]
 ----
 <.> Initialize the library once, before any other Couchbase{nbsp}Lite call
 <.> Open a local database, creating it on first run
-<.> Create a collection named `hotels` in a scope named `inventory`
-<.> Save a document to the collection
+<.> Get the collection, creating it if this is the first run
+<.> Save a document under the ID `hotel::1`. Re-running the app overwrites it rather than adding another
 <.> Query the collection with {sqlpp} for Mobile
 <.> Render the results on screen
 ====
@@ -121,19 +83,64 @@ Move database work to a background thread in a real app.
 See xref:android:database.adoc[Databases].
 ====
 
+[#step-4-run-it]
 == Step 4: Run It
 
 Run the app on your emulator or device.
 The screen shows the hotel you saved, read back through a {sqlpp} query against the local database.
 
+[#what-you-just-built]
 == What You Just Built
 
 * A Couchbase{nbsp}Lite database stored on the device, with no network involved
 * A document saved to a named scope and collection
 * A {sqlpp} query that returns that document to your UI
 
+[#next-steps]
 == Next Steps
 
-Sync this app to the cloud and make it work offline: xref:android:tutorial-cloud-sync.adoc[Add Cloud Sync].
+Sync this app to the cloud and make it work offline: xref:tutorial-cloud-sync.adoc[Add Cloud Sync].
 
-Working in Java rather than Kotlin? The xref:android:gs-build.adoc[Getting Started App] shows the same operations in both languages.
+Working in Java rather than Kotlin?
+The xref:android:gs-build.adoc[Getting Started App] shows the same operations in both languages.
+
+[#related-content]
+== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+====== {empty}
+.How to . . .
+* xref:android:gs-prereqs.adoc[Prerequisites]
+* xref:android:gs-install.adoc[Install]
+* xref:android:gs-five-minutes.adoc[Quick Start]
+* xref:android:tutorial-cloud-sync.adoc[Add Cloud Sync]
+* xref:android:gs-build.adoc[Getting Started App]
+
+.
+
+[.column]
+====== {empty}
+.Learn more . . .
+* xref:android:database.adoc[Databases]
+* xref:android:document.adoc[Documents]
+* xref:android:blob.adoc[Blobs]
+* xref:android:replication.adoc[Remote Sync Gateway]
+* xref:android:conflict.adoc[Handling Data Conflicts]
+
+.
+
+[.column]
+====== {empty}
+.Dive Deeper . . .
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+.
+
+++++
+</div>
+++++

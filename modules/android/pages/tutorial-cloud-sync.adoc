@@ -11,181 +11,256 @@ _Abstract -- Add a replicator to the app you built in the Quick Start, sync it t
 --
 
 You take the local app from the xref:android:gs-five-minutes.adoc[Quick Start] and connect it to Couchbase Capella App Services.
-By the end, the app writes to a local database, syncs those writes to the cloud, and carries on working with no network at all.
+By the end, the app writes to a local database, syncs those writes to the cloud, receives changes other clients make, and carries on working with no network at all.
 
+Allow about 30 minutes.
+
+[#img-sync]
+.The app after syncing with Capella App Services
+image::ROOT:cbl-sync-android.png[Android app listing hotel records, with a sync status of IDLE above them,300]
+
+[#prerequisites]
 == Prerequisites
 
 * The working app from the xref:android:gs-five-minutes.adoc[Quick Start]
-* A Capella App Services deployment with a configured App Endpoint, an App User, and its public connection URL. See xref:app-services:get-started/configuring-app-services.adoc[Configure Your Free Tier App Services].
+* A Capella App Services deployment with an App Endpoint linked to the `travel-sample` bucket, `inventory` scope, and `hotel` collection.
+See xref:app-services:get-started/configuring-app-services.adoc[Configure Your Free Tier App Services]
+* An App User on that endpoint
 
-[IMPORTANT]
-====
-Your App Endpoint must expose a scope and collection whose names match the ones in your app.
-The Quick Start uses the scope `inventory` and the collection `hotels`.
-Either configure your App Endpoint with the same names, or change the names in your app to match your endpoint.
-Replication fails if the collection does not exist at both ends.
-====
-
-You need 3 values from your App Endpoint before you start:
+Collect these three values before you start:
 
 [cols="1,3"]
 |===
 |Value |Where to find it
 
 |Public connection URL
-|The *Connect* tab of your App Endpoint. It looks like `wss://<id>.apps.cloud.couchbase.com:4984`
+|The *Connect* tab of your App Endpoint, under *Connect via Couchbase Lite*. +
+It looks like `wss://<id>.apps.cloud.couchbase.com:4984`
 
 |App Endpoint name
 |The name you gave the endpoint when you created it
 
 |App User credentials
-|The *App Users* tab of your App Endpoint
+|*Security* > *App Users*
 |===
 
-== Step 1: Add a Way to Create Documents
+[#step-1-grant-your-app-access-to-its-data]
+== Step 1: Grant Your App Access to Its Data
+
+App Services decides what each App User can read using channels.
+Your app writes documents, an access control function puts those documents into a channel, and the App User must hold that channel to read them back.
+
+Skip this step and your writes still reach the cloud, but nothing ever comes back.
+
+. Go to your App Endpoint, then *Security* > *Access and Validation*, and select the `hotel` collection.
+. Replace the function with the following, then click *Save*:
++
+[source,javascript]
+----
+function (doc, oldDoc, meta) {
+    if (doc.source == "cbl-tutorial") {
+        channel('demo');
+    } else {
+        channel('travel-sample');
+    }
+}
+----
++
+This puts the documents your app creates into a `demo` channel, and leaves the 917 existing travel-sample hotels in a separate channel your app never reads.
+. Click *Run Test*, paste a sample document, and confirm *Channels Assigned* shows `demo`:
++
+[source,json]
+----
+{"type": "hotel", "source": "cbl-tutorial", "name": "Hotel Test", "city": "Birmingham"}
+----
+. Go to *Security* > *App Users*, select your App User, and under *Assign Channels* enter `demo` in the row for the `hotel` collection.
+Click *Save*.
+
+[IMPORTANT]
+====
+Granting a channel to a user who's already connected does not backfill their existing session.
+Restart the app after you save the grant.
+====
+
+[#step-2-add-the-replicator]
+== Step 2: Add the Replicator
 
 The Quick Start saved one document at launch.
-To watch sync happen, you need to write documents while the app runs.
+To watch sync happen, you need to write documents while the app runs, and you need the UI to update when documents arrive from the cloud.
 
-Replace the contents of `MainActivity.kt` with the following, then fill in your 3 values on the highlighted lines.
+Replace the contents of `MainActivity.kt` with the following.
 
 [#ex-cloud-sync]
 ====
 [source,kotlin]
 ----
-package com.couchbase.android.fiveminutes
-
-import android.os.Bundle
-import android.util.Log
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import com.couchbase.lite.BasicAuthenticator
-import com.couchbase.lite.CouchbaseLite
-import com.couchbase.lite.Database
-import com.couchbase.lite.MutableDocument
-import com.couchbase.lite.Replicator
-import com.couchbase.lite.ReplicatorConfiguration
-import com.couchbase.lite.ReplicatorType
-import com.couchbase.lite.URLEndpoint
-import java.net.URI
-
-class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        CouchbaseLite.init(this)
-        val database = Database("getting-started")
-        val collection = database.createCollection("hotels", "inventory")
-
-        val hotels = mutableStateOf(emptyList<String>())
-        val syncState = mutableStateOf("Starting")
-
-        val query = database.createQuery(
-            "SELECT name, city FROM inventory.hotels WHERE type = 'hotel'"
-        )
-
-        query.addChangeListener { change -> // <.>
-            hotels.value = change.results?.allResults()?.map {
-                "${it.getString("name")}, ${it.getString("city")}"
-            } ?: emptyList()
-        }
-
-        val target = URLEndpoint(
-            URI("wss://YOUR-ID.apps.cloud.couchbase.com:4984/YOUR-ENDPOINT-NAME") // <.>
-        )
-
-        val config = ReplicatorConfiguration(target)
-        config.addCollection(collection, null) // <.>
-        config.type = ReplicatorType.PUSH_AND_PULL
-        config.isContinuous = true // <.>
-        config.setAuthenticator(
-            BasicAuthenticator("YOUR-APP-USER", "YOUR-PASSWORD".toCharArray()) // <.>
-        )
-
-        val replicator = Replicator(config)
-
-        replicator.addChangeListener { change -> // <.>
-            syncState.value = change.status.activityLevel.toString()
-            change.status.error?.let { Log.e("SYNC", "Replication error", it) }
-        }
-
-        replicator.start()
-
-        setContent {
-            Column(Modifier.fillMaxSize().padding(24.dp)) {
-                Text("Sync: ${syncState.value}")
-                Button(onClick = {
-                    collection.save( // <.>
-                        MutableDocument()
-                            .setString("type", "hotel")
-                            .setString("name", "Hotel ${(100..999).random()}")
-                            .setString("city", "Birmingham")
-                    )
-                }) { Text("Add a hotel") }
-                hotels.value.forEach { hotel -> Text(hotel) }
-            }
-        }
-    }
-}
+include::example$CloudSyncKotlin/app/src/main/java/com/couchbase/android/cloudsync/MainActivity.kt[tag="cloudsync"]
 ----
 <.> Listen for query results instead of reading them once, so the UI updates when documents arrive from the cloud
 <.> Your public connection URL, with your App Endpoint name appended as the path
-<.> Register the collection you want to sync. Passing `null` syncs it with no filters or conflict handler
-<.> Keep the connection open and sync changes as they happen, in both directions
+<.> Build a configuration for each collection you want to sync
 <.> Your App User credentials
+<.> Sync in both directions, and keep the connection open so changes flow as they happen
 <.> Report the replicator's activity level so you can see sync state on screen
-<.> Write to the local database. The replicator picks the change up on its own
+<.> Write to the local database, and the replicator picks the change up on its own
 ====
+
+Each document carries `source: "cbl-tutorial"`, which is what the access control function looks for.
 
 [CAUTION]
 ====
-The credentials above are hard-coded to keep the tutorial short.
+Read your endpoint URL and credentials from your build configuration or a secure store.
 Do not commit credentials to source control, and do not ship them in a released app.
-Load them from your build configuration or a secure store instead.
 ====
 
-== Step 2: Run It and Confirm Sync
+[#step-3-run-it-and-confirm-sync]
+== Step 3: Run It and Confirm Sync
 
 . Run the app on your emulator or device
-. Tap *Add a hotel* two or three times to show each record from your local database
-. Check the sync state on screen. It moves through `CONNECTING` and `BUSY`, then settles on `IDLE`
+. Tap *Add a hotel* 3 times.
+Each record appears on screen immediately, because it comes from the local database
+. Watch the sync state.
+It reads `IDLE` when connected with nothing to do, and `BUSY` while it sends your writes
 . In Capella, open your App Endpoint and view its documents
 
+Your hotels are in the cloud.
+The app never waited for the network to show them to you.
 
-== Step 3: Go Offline and Keep Working
+[NOTE]
+====
+If your App Endpoint already holds documents in the `demo` channel, the replicator
+pulls them as soon as it connects.
+You may see records in the list before you add any yourself.
+====
 
-. Put the device or emulator into airplane mode
+[NOTE]
+====
+Couchbase Lite only writes warnings and errors to Logcat by default, so a healthy sync logs nothing at all.
+Use the sync state on screen to confirm it's working, or raise the log level with `Database.log.console.level`.
+====
+
+[#if-nothing-syncs-back]
+=== If Nothing Syncs Back
+
+If your writes reach Capella but nothing ever arrives from it, check the App User's channel grant first.
+
+A user with no channels can still write, so push succeeds, pull returns nothing, the sync state sits at `IDLE`, and Logcat stays silent.
+Nothing reports an error, because nothing is failing: App Services is correctly sending a user no documents they can read.
+
+Go to *Security* > *App Users*, confirm `demo` is assigned for the `hotel` collection, and restart the app.
+
+[#step-4-sync-from-the-cloud]
+== Step 4: Sync From the Cloud
+
+Until now, you have only proved that writes leave the device.
+Now prove they arrive.
+
+Create a document through App Services, using your App User credentials:
+
+[source,bash]
+----
+curl -X PUT \
+  'https://<id>.apps.cloud.couchbase.com:4984/<endpoint>.inventory.hotel/hotel-live-1' \
+  -u '<app-user>:<password>' \
+  -H 'Content-Type: application/json' \
+  -d '{"type":"hotel","source":"cbl-tutorial","name":"Hotel Live","city":"Leeds"}'
+----
+
+Do not touch the app.
+Within a few seconds the new hotel appears in the list.
+
+The live query you registered in Step 2 fires when the replicator writes the incoming document to the local database, and the UI updates itself.
+
+[TIP]
+====
+Create the document through App Services, as above, rather than writing to the bucket directly through the cluster.
+A write that bypasses App Services never runs the access control function, so it never lands in a channel and never reaches your app.
+====
+
+[#step-5-go-offline-and-keep-working]
+== Step 5: Go Offline and Keep Working
+
+. Put the device into airplane mode
 . Tap *Add a hotel* again, twice
 
-The records still appear on screen. Writes go to the local database, and the app does not care that the network is gone.
-The sync state now reports `OFFLINE`.
+The records still appear on screen.
+Writes go to the local database, and the app does not care that the network is gone.
 
-This is the point of an offline-first app. Nothing failed, nothing queued behind a spinner, and no code handled the outage.
+This is the point of an offline-first app.
+Nothing failed, nothing queued behind a spinner, and no code handled the outage.
 
-== Step 4: Reconnect and Watch It Sync
+[#step-6-reconnect-and-watch-it-sync]
+== Step 6: Reconnect and Watch It Sync
 
 . Turn airplane mode off
 
-The sync state returns to `BUSY`, then `IDLE`.
-Check your App Endpoint documents in Capella again. The records you created offline are there.
+The replicator reconnects on its own and sends what you wrote while offline.
+Allow up to a minute.
+Restoring a network connection does not always restore name resolution at the same
+moment, so the first reconnect attempt can fail before a later one succeeds.
+Check your App Endpoint documents in Capella again.
+The records you created offline are there.
 
+[NOTE]
+====
+Couchbase Lite treats dropped connections as transient and retries automatically.
+A network error in Logcat followed by a return to `IDLE` is the replicator recovering, not a failure you need to handle.
+Each retry backs off further than the last, so a later attempt can be 30 seconds
+or more after the one before it.
+====
+
+[#what-you-built]
 == What You Built
 
 * A local database that accepts writes with or without a network
 * Continuous two-way replication to Capella App Services
 * A live query that updates your UI when documents arrive from the cloud
 
+[#next-steps]
 == Next Steps
 
 * xref:android:replication.adoc[Remote Sync Gateway] for replication options, filters, and channels
 * xref:android:conflict.adoc[Handling Data Conflicts] for what happens when two devices edit the same document
 * xref:android:query-live.adoc[Live Queries] for the listener you used in this tutorial
 * xref:android:p2psync-multipeer.adoc[Multipeer Peer-to-Peer Replicator] to sync between devices with no cloud at all
+
+[#related-content]
+== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+====== {empty}
+.How to . . .
+* xref:android:gs-prereqs.adoc[Prerequisites]
+* xref:android:gs-install.adoc[Install]
+* xref:android:gs-five-minutes.adoc[Quick Start]
+* xref:android:tutorial-cloud-sync.adoc[Add Cloud Sync]
+* xref:android:gs-build.adoc[Getting Started App]
+
+.
+
+[.column]
+====== {empty}
+.Learn more . . .
+* xref:android:database.adoc[Databases]
+* xref:android:document.adoc[Documents]
+* xref:android:blob.adoc[Blobs]
+* xref:android:replication.adoc[Remote Sync Gateway]
+* xref:android:conflict.adoc[Handling Data Conflicts]
+
+.
+
+[.column]
+====== {empty}
+.Dive Deeper . . .
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+.
+
+++++
+</div>
+++++
