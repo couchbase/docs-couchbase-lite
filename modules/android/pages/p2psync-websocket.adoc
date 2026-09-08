@@ -11,19 +11,18 @@ ifdef::show_edition[:page-edition: Enterprise Edition]
 :source-language: Kotlin
 
 
-// Present common content including abstract and related content footer blocks
 [abstract]
 --
 Description -- _{description}_ +
-_Abstract -- An introduction to Couchbase Lite’s Peer-to-Peer Synchronization and its concepts._ +
+_Abstract -- An introduction to Couchbase Lite's Peer-to-Peer Synchronization and its concepts._ +
 Related Content -- https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/[API Reference]  |  xref:android:p2psync-websocket-using-passive.adoc[Passive Peer]  |  xref:android:p2psync-websocket-using-active.adoc[Active Peer]
 --
 
 
 [TIP]
-xref:p2psync-multipeer.adoc[Multipeer P2P Replicator]
+.Multipeer P2P Replicator
 ====
-Multipeer P2P Replicator is available for Android, offering:
+xref:p2psync-multipeer.adoc[Multipeer P2P Replicator] is available for Android, offering:
 
 * Auto-discovery over Wi-Fi and Bluetooth Low Energy
 * Automatic transport switching between Wi-Fi and Bluetooth when both are enabled
@@ -31,7 +30,6 @@ Multipeer P2P Replicator is available for Android, offering:
 * Dynamic mesh topology for optimal peer connectivity
 * Secure communication via TLS and certificate-based authentication
 ====
-
 
 
 
@@ -90,6 +88,15 @@ Couchbase Lite supports different transport modes depending on the peer-to-peer 
 
 
 You can also learn how to implement Peer-to-Peer synchronization by referring to our tutorial -- see: xref:tutorials:cbl-p2p-sync-websockets:swift/cbl-p2p-sync-websockets.adoc[Getting Started with Peer-to-Peer Synchronization].
+
+[#channels]
+== Channels
+
+[IMPORTANT]
+====
+`channels` is a Sync Gateway construct and is not supported in Peer-to-Peer or Database-to-Database replication.
+If your Sync Gateway Access Control and Data Validation Function assigns documents to channels, that channel information has no effect when replicating directly between two Couchbase Lite databases.
+====
 
 [#features]
 == Features
@@ -238,7 +245,7 @@ include::android:example$codesnippet_collection.java[tags="replicator-simple", i
 
 ====
 
-<.> Get the Listener's endpoint.
+<.> Get the Listener's' endpoint.
 Here we use a known URL, but it could be a URL established dynamically in a discovery phase.
 <.> Initialize the replicator configuration with the database to be synchronized and the Listener it is to synchronize with
 <.> Configure the replicator to expect a self-signed certificate from the Listener
