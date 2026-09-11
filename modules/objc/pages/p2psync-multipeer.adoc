@@ -109,14 +109,19 @@ To use Wi-Fi transport, declare the Bonjour service type and a local network usa
 
 ==== Bluetooth Transport
 
-To use Bluetooth transport, declare a Bluetooth usage description.
+To use Bluetooth transport, complete the following:
 
+. Declare the Bluetooth usage description in `Info.plist`.
++
 .NSBluetoothAlwaysUsageDescription
 [source,xml]
 ----
 <key>NSBluetoothAlwaysUsageDescription</key>
 <string>Used for discovering and connecting to peers for peer-to-peer sync.</string>
 ----
+
+. Link the `CoreBluetooth.framework` framework in your application target.
+In Xcode, add it under *General > Frameworks, Libraries, and Embedded Content*, or add it in the *Link Binary With Libraries* build phase.
 
 
 == Configuration
