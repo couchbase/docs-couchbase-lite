@@ -1,0 +1,523 @@
+= Documents
+
+____
+Description - _Couchbase Lite Concepts - Data Model - Documents_ +
+Related Content - xref:react-native:databases.adoc[Databases] | xref:react-native:blobs.adoc[Blobs] | xref:react-native:indexes.adoc[Indexing]
+____
+
+== Overview
+
+=== Document Structure
+
+In Couchbase Lite the term 'document' refers to an entry in the database. You can compare it to a record, or a row in a table.
+
+Each document has an ID or unique identifier. This ID is similar to a primary key in other databases.
+
+You can specify the ID programmatically. If you omit it, it will be automatically generated as a UUID.
+
+[NOTE]
+====
+Couchbase documents are assigned to a Collection. The ID of a document must be unique within the Collection it is written to. You cannot change it after you have written the document.
+====
+
+The document also has a value which contains the actual application data. This value is stored as a dictionary of key-value (k-v) pairs. The values can be made of up several different Data Types such as numbers, strings, arrays, and nested objects.
+
+=== Data Encoding
+
+The document body is stored in an internal, efficient, binary form called https://github.com/couchbase/fleece#readme[Fleece]. This internal form can be easily converted into a manageable native dictionary format for manipulation in applications.
+
+Fleece data is stored in the smallest format that will hold the value whilst maintaining the integrity of the value.
+
+=== Data Types
+
+The Document class offers a set of property accessors for various scalar types, such as:
+
+* Boolean
+* Date
+* Double
+* Float
+* Int
+* Long
+* String
+
+These accessors take care of converting to/from JSON encoding, and make sure you get the type you expect.
+
+In addition to these basic data types Couchbase Lite provides for the following:
+
+* *Dictionary* - Represents a read-only key-value pair collection
+* *MutableDictionary* - Represents a writeable key-value pair collection.
+* *Array* - Represents a writeable collection of objects.
+* *MutableArray* - Represents a writeable collection of objects.
+* *Blob* - Represents an arbitrary piece of binary data.
+
+=== JSON
+
+Couchbase Lite also provides for the direct handling of JSON data implemented in most cases by the provision of a ToJSON() method on appropriate API classes (for example, on MutableDocument, Dictionary, Blob and Array) - see Working with JSON Data.
+
+== Constructing a Document
+
+An individual document often represents a single instance of an object in application code. A document might be considered equivalent to a row in a relational table; with each of the document's attributes being equivalent to a column.
+
+Documents can contain nested structures. This allows developers to express many-to-many relationships without requiring a reference or junction table; and is naturally expressive of hierarchical data.
+
+Most apps will work with one or more documents, persisting them to a local database and optionally syncing them, either centrally or to the cloud.
+
+In this section we provide an example of how you might create a hotel document, which provides basic contact details and price data.
+
+=== Data Model
+
+[,typescript]
+----
+hotel: {
+  type: string (value = `hotel`)
+  name: string
+  address: dictionary {
+    street: string
+    city: string
+    state: string
+    country: string
+    code: string
+  }
+  phones: array
+  rate: float
+}
+----
+
+=== Open a Database
+
+First open your database. If the database does not already exist, Couchbase Lite will create it for you.
+
+[,typescript]
+----
+const myDatabase = new Database('myDatabaseName', config);
+----
+
+See xref:react-native:databases.adoc[Databases] for more information.
+
+=== Create a Document
+
+[,typescript]
+----
+let document = new MutableDocument(hotel.id);
+----
+
+For more on using Documents, see Document Initializers and Mutability.
+
+=== Create a Dictionary
+
+Now create a mutable dictionary (address).
+
+Each element of the dictionary value will be directly accessible via its own key.
+
+[,typescript]
+----
+// Create a new MutableDocument instance
+const document = new MutableDocument();
+
+// Now, populate the document as if it's a dictionary named 'address'
+document.setString('address.street', '1 Main st.');
+document.setString('address.city', 'San Francisco');
+document.setString('address.state', 'CA');
+document.setString('address.country', 'USA');
+document.setString('address.code', '90210');
+----
+
+=== Create an Array
+
+Since the hotel may have multiple contact numbers, provide a field (phones) as a mutable array.
+
+[,typescript]
+----
+// Create an instance of MutableDocument
+const hotelInfo = new MutableDocument();
+
+// Since `setArray` method accepts an array, directly pass the contact numbers as an array
+hotelInfo.setArray("phones", ["650-000-0000", "650-000-0001"]);
+----
+
+=== Populate a Document
+
+Now add your data to the mutable document created earlier. Each data item is stored as a key-value pair.
+
+[,typescript]
+----
+// Assuming address and phones are already defined as shown in previous examples
+const address = {
+  street: "1 Main st.",
+  city: "San Francisco",
+  state: "CA",
+  country: "USA",
+  code: "90210"
+};
+
+const phones = ["650-000-0000", "650-000-0001"];
+
+// Create an instance of MutableDocument
+let hotelInfo = new MutableDocument();
+
+// Add document type and hotel name as string
+hotelInfo.setString("type", "hotel");
+hotelInfo.setString("name", "Hotel Java Mo");
+
+// Add average room rate (float)
+hotelInfo.setFloat("room_rate", 121.75);
+
+// Add address (dictionary)
+hotelInfo.setDictionary("address", address);
+
+// Add phone numbers (array)
+hotelInfo.setArray("phones", phones);
+----
+
+[NOTE]
+====
+Couchbase recommend using a type attribute to define each logical document type.
+====
+
+=== Save a Document
+
+With the document now populated, we can persist to our Couchbase Lite database.
+
+[,typescript]
+----
+await collection.save(document);
+----
+
+=== Close the Database
+
+With your document saved, you can now close our Couchbase Lite database.
+
+[,typescript]
+----
+database.close();
+----
+
+== Working with Data
+
+=== Date accessors
+
+Couchbase Lite offers Date accessors as a convenience. Dates are a common data type, but JSON doesn't natively support them, so the convention is to store them as strings in ISO-8601 format.
+
+==== Example 1. Date Getter
+
+This example sets the date on the createdAt property and reads it back using the Document.getDate() accessor method.
+
+[,typescript]
+----
+// Create an instance of MutableDocument
+let document = new MutableDocument();
+
+// Set the current date on the "createdAt" property
+document.setDate("createdAt", new Date());
+
+// Get the Date
+const date = document.getDate("createdAt");
+----
+
+=== Using Dictionaries
+
+==== Example 2. Read Only
+
+[,typescript]
+----
+// Get a document by ID
+const doc: Document = collection.document('doc1');
+
+// Getting a dictionary from the document's properties
+const addressDict = doc.getDictionary('address');
+
+// Access a value with a key from the dictionary
+const street = addressDict?.getString('street');
+
+// Iterate over the dictionary
+Object.keys(addressDict || {}).forEach(key => {
+  console.log(`Key ${key} = ${addressDict[key]}`);
+});
+
+// Create a mutable copy
+const mutableDict = { ...addressDict };
+----
+
+==== Example 3. Mutable
+
+[,typescript]
+----
+// Create a new "dictionary" as a simple JavaScript object
+const addressDict = {
+  street: "1 Main st.",
+  city: "San Francisco",
+};
+
+// Create a new mutable document and add the dictionary to its properties
+const mutableDoc = new MutableDocument("doc1");
+mutableDoc.setDictionary("address", addressDict);
+
+// Simulate saving the document
+await collection.save(mutableDoc);
+----
+
+=== Using Arrays
+
+==== Example 4. Read Only
+
+[,typescript]
+----
+// Getting a phones array from the document's properties
+const phonesArray = document.data.phones;
+
+// Get element count
+const count = phonesArray.length;
+
+// Access an array element by index
+if (count >= 1) {
+  const phone = phonesArray[1];
+  console.log(`Second phone: ${phone}`);
+}
+
+// Iterate over the array
+phonesArray.forEach((item, index) => {
+  console.log(`Item ${index} = ${item}`);
+});
+
+// Create a mutable copy of the array
+const mutableArray = [...phonesArray];
+----
+
+==== Example 5. Mutable
+
+[,typescript]
+----
+// Create a new mutable document
+const document = new MutableDocument();
+
+// Prepare the data for the array
+const phones = ["650-000-0000", "650-000-0001"];
+
+// Assign the array to a key in the document
+doc.setArray("phones", phones);
+
+// Save the document with the new array to the database
+await collection.save(doc);
+----
+
+=== Using Blobs
+
+For more on working with blobs, see xref:react-native:blobs.adoc[Blobs]
+
+== Document Initializers
+
+The `MutableDocument` constructor can be used to create a new document where the document ID is randomly generated by the database.
+
+Use the `MutableDocument('specific_id')` initializer to create a new document with a specific ID.
+
+The `Collection.document` method can be used to get a document. If it doesn't exist in the collection, it will return null. This method can be used to check if a document with a given ID already exists in the collection.
+
+=== Convert Mutable Document from Document
+
+The `MutableDocument` class has a static function `fromDocument` that takes a `Document` as a parameter. This allows you to create a mutable copy of an existing document so you can modify it and then save it to a collection.
+
+[,typescript]
+----
+const doc: Document = collection.document('doc1');
+const mutableDoc = MutableDocument.fromDocument(doc);
+mutableDoc.setString('name', 'New Name');
+await collection.save(mutableDoc);
+----
+
+==== Example 6. Persist a document
+
+The following code example creates a document and persists it to the database.
+
+[,typescript]
+----
+// Create a new MutableDocument instance
+const document = new MutableDocument();
+
+// Set various fields on the document
+document.setString('type', 'task');
+document.setString('owner', 'todo');
+document.setDate('createdAt', new Date());
+
+// Persist the document to the database
+await collection.save(document);
+----
+
+== Document Change Listeners
+
+Monitor changes to a specific document by ID. Couchbase Lite allows you to register listeners to be notified when documents change. Version 1.0 introduces the `ListenerToken` API for better listener lifecycle management.
+
+=== When to Use
+
+* Watch a user profile for updates
+* Monitor a shopping cart
+* Track order status changes
+* Real-time document collaboration
+
+=== Data Structure
+
+[,typescript]
+----
+interface DocumentChange {
+  documentId: string;     // Document ID (lowercase Id)
+  collection: Collection; // Collection reference
+  database: Database;     // Database reference (available!)
+}
+----
+
+[NOTE]
+====
+Unlike collection listeners, document change listeners DO have a direct `database` property.
+====
+
+==== Example 7. Monitor Specific Document
+
+[,typescript]
+----
+import { ListenerToken } from '@couchbase/couchbase-lite-react-native';
+
+const token: ListenerToken = await collection.addDocumentChangeListener(
+  'user-123',
+  async (change) => {
+    console.log(`Document ${change.documentId} changed`);
+
+    // Fetch latest version
+    const doc = await collection.document(change.documentId);
+    if (doc) {
+      console.log('New data:', doc.getData());
+    } else {
+      console.log('Document was deleted');
+    }
+  }
+);
+
+// Remove when done
+await token.remove();
+----
+
+==== Example 8. Multiple Document Listeners
+
+[,typescript]
+----
+// Monitor multiple specific documents
+const userToken = await collection.addDocumentChangeListener('user-123', (change) => {
+  console.log('User changed');
+});
+
+const cartToken = await collection.addDocumentChangeListener('cart-abc', (change) => {
+  console.log('Cart changed');
+});
+
+// Cleanup all
+await Promise.all([userToken.remove(), cartToken.remove()]);
+----
+
+.New in Version 1.0
+[TIP]
+====
+Change listeners now return a `ListenerToken` object. Use `token.remove()` to remove the listener.
+====
+
+.Deprecated
+[CAUTION]
+====
+The `collection.removeDocumentChangeListener(token)` method is deprecated. It remains available for backward compatibility, but new applications should use `token.remove()`. Existing applications are strongly encouraged to migrate.
+====
+
+=== Common Pitfalls
+
+.Property Name
+[CAUTION]
+====
+[,typescript]
+----
+change.documentId  // CORRECT (lowercase Id)
+change.documentID  // WRONG - will be undefined
+----
+
+Getting this property name wrong is a common source of errors.
+====
+
+*Async Handling in Callbacks*
+
+[,typescript]
+----
+// WRONG - promise not awaited
+const token = await collection.addDocumentChangeListener('doc-id', (change) => {
+  collection.document(change.documentId);  // Returns promise, not awaited!
+});
+
+// CORRECT - proper async handling
+const token = await collection.addDocumentChangeListener('doc-id', async (change) => {
+  const doc = await collection.document(change.documentId);
+  console.log('Document:', doc);
+});
+----
+
+== Document Expiration
+
+Document expiration allows users to set the expiration date for a document. When the document expires, it is purged from the database. The purge is not replicated to Sync Gateway or Capella App Services.
+
+[,typescript]
+----
+const expirationDate = new Date('2024-12-31T23:59:59');
+await collection.setDocumentExpiration('doc123', expirationDate);
+----
+
+In version 1.1, passing `null` clears a document's expiration. Expiration values are parsed as strict UTC ISO-8601 dates when crossing the native bridge.
+
+[,typescript]
+----
+await collection.setDocumentExpiration('doc123', null);
+----
+
+== Purge a Document
+
+Documents can be purged from the local database using the `purge` method on the collection they are stored in.
+
+[,typescript]
+----
+const doc = collection.document('doc1');
+await collection.purge(doc);
+----
+
+You can also purge a document by it's ID.
+
+[,typescript]
+----
+await collection.purgeById('doc1');
+----
+
+Collection purges are not replicated.
+
+== Delete a Document
+
+Documents can be deleted using the `delete` method on the collection they are stored in.
+
+[,typescript]
+----
+const doc = collection.document('doc1');
+await collection.delete(doc);
+----
+
+Note that document deletion are replicated to Sync Gateway or Capella App Services.
+
+When using `ConcurrencyControl.FAIL_ON_CONFLICT`, version 1.1 checks the document revision ID before deleting. A delete using a stale document revision rejects instead of deleting a newer revision.
+
+== Document Constraints
+
+Couchbase Lite APIs do not explicitly disallow the use of attributes with the underscore prefix at the top level of document. This is to facilitate the creation of documents for use either in local only mode where documents are not synced.
+
+[NOTE]
+====
+`_id`, `_rev` and `_sequence` are reserved keywords and must not be used as top-level attributes - see <<example-13-reserved-keys-list,Example 13>>.
+====
+
+[discrete]
+==== Example 13. Reserved Keys List
+
+* `_attachments`
+* `_deleted`
+* `_id`
+* `_removed`
+* `_rev`
+* `_sequence`

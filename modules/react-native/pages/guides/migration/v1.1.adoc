@@ -1,0 +1,110 @@
+= Version 1.1
+
+____
+Description - _Quick reference for customer-facing changes in @couchbase/couchbase-lite-react-native version 1.1_ +
+Related Content - xref:react-native:product-notes/release-notes.adoc[Release Notes] | xref:react-native:troubleshooting/using-logs.adoc[Using Logs]
+____
+
+== At a Glance
+
+Version 1.1 is focused on React Native New Architecture support and better troubleshooting:
+
+. *TurboModules* - iOS and Android modules now support the React Native New Architecture.
+. *Improved file logging* - React Native wrapper diagnostics can be written to file and custom log sinks.
+. *LogSinks.write()* - application code can write messages into configured Couchbase Lite log sinks.
+. *Reliability fixes* - listener cleanup, document expiration, and conflict-aware deletes are improved.
+. *Official npm package* - published as `@couchbase/couchbase-lite-react-native`, replacing the legacy `cbl-reactnative` package.
+
+== NPM Package Rename
+
+Version 1.1 is published on npm as https://www.npmjs.com/package/@couchbase/couchbase-lite-react-native[`@couchbase/couchbase-lite-react-native`]. The legacy unscoped package `cbl-reactnative` (1.0.1 and earlier) is superseded. New installs and upgrades should use the scoped package.
+
+|===
+| What to update | Before (`cbl-reactnative`) | After (`@couchbase/couchbase-lite-react-native`)
+
+| Install
+| `npm install cbl-reactnative`
+| `npm install @couchbase/couchbase-lite-react-native`
+
+| TypeScript imports
+| `from 'cbl-reactnative'`
+| `from '@couchbase/couchbase-lite-react-native'`
+
+| Android Gradle path
+| `node_modules/cbl-reactnative/android/build.gradle`
+| `node_modules/@couchbase/couchbase-lite-react-native/android/build.gradle`
+
+| Expo plugin podspec path
+| `node_modules/cbl-reactnative/cbl-reactnative.podspec`
+| `node_modules/@couchbase/couchbase-lite-react-native/cbl-reactnative.podspec`
+|===
+
+*Upgrade checklist:*
+
+. Remove `cbl-reactnative` from `package.json`
+. Install `@couchbase/couchbase-lite-react-native`
+. Update all import paths and native wiring paths
+. Rebuild native projects (`pod install`, Gradle clean build)
+
+== TurboModule Support
+
+Version 1.1 supports https://reactnative.dev/architecture/overview[React Native New Architecture] through TurboModules. Existing application-level Couchbase Lite APIs remain largely compatible, but New Architecture should be enabled to use the TurboModule implementation.
+
+For Expo development builds, enable New Architecture in `app.json`:
+
+[,json]
+----
+{
+  "expo": {
+    "newArchEnabled": true
+  }
+}
+----
+
+For React Native Android projects, make sure `newArchEnabled=true` is set in the Android project configuration.
+
+== Logging Changes
+
+=== React Native Logs in File and Custom Sinks
+
+When a file or custom log sink is enabled, version 1.1 can forward React Native wrapper diagnostics into the same logging pipeline as native Couchbase Lite logs.
+
+React Native-originated lines are prefixed with `RN`:
+
+[,text]
+----
+RN ::DEBUG:: database_Open
+RN ::WARNING:: query_RemoveChangeListener rejected: no listener for token
+RN ::ERROR:: collection_Save failed
+----
+
+This helps diagnose issues that cross the JavaScript/native boundary while keeping sensitive payloads out of forwarded logs.
+
+=== Writing Application Logs
+
+Use `LogSinks.write()` to write application messages into configured Couchbase Lite sinks:
+
+[,typescript]
+----
+import { LogSinks, LogLevel, LogDomain } from '@couchbase/couchbase-lite-react-native';
+
+await LogSinks.write(
+  LogLevel.WARNING,
+  LogDomain.DATABASE,
+  'Retrying database open after transient failure'
+);
+----
+
+== Smaller Behavior Improvements
+
+* Passing `null` to `setDocumentExpiration()` clears a document expiration.
+* Delete operations using `ConcurrencyControl.FAIL_ON_CONFLICT` reject stale revisions more consistently.
+* Query, collection, and replicator listener routing is more consistent on New Architecture builds.
+* Android replication filters support JavaScript arrow functions.
+* `FileSystem.getFilesInDirectory(path)` can list generated log files.
+
+== Repository Links
+
+* https://www.npmjs.com/package/@couchbase/couchbase-lite-react-native[@couchbase/couchbase-lite-react-native on npm]
+* https://github.com/couchbase/couchbase-lite-react-native[couchbase/couchbase-lite-react-native]
+* https://github.com/couchbase/couchbase-lite-js-common[couchbase/couchbase-lite-js-common]

@@ -1,0 +1,197 @@
+= Live Queries
+:pp: {plus}{plus}
+
+____
+Description - _Couchbase Lite Live Query Concepts_
+Related Content - xref:react-native:queries/sqlplusplus.adoc[SQL{pp} for Mobile]
+____
+
+== Activating a Live Query
+
+A live query is a query that, once activated, remains active and monitors the database for changes; refreshing the result set whenever a change occurs. As such, it is a great way to build reactive user interfaces - especially table/list views - that keep themselves up to date.
+
+*So, a simple use case may be:* A replicator running and pulling new data from a server, whilst a live-query-driven UI automatically updates to show the data without the user having to manually refresh. This helps your app feel quick and responsive.
+
+With Couchbase Lite for React Native, live queries can be watched through:
+
+....
+* Listener callbacks: `Query.addChangeListener`
+....
+
+Each time you start watching a live query, the query is executed and an initial change notification is dispatched. The query is then kept active and further change notifications are dispatched whenever a change occurs.
+
+[discrete]
+==== Example 1. Starting a Live Query - Change Listener
+
+[,typescript]
+----
+import { ListenerToken } from '@couchbase/couchbase-lite-react-native';
+
+// Register a change listener
+const token: ListenerToken = await query.addChangeListener((change) => {
+  if (change.error) {
+    console.error('Query error:', change.error);
+    return;
+  }
+
+  const results = change.results;
+  // results is an array of result objects
+  for (const doc of results) {
+    console.log('Result:', doc);
+  }
+});
+----
+
+.Version 1.0
+[NOTE]
+====
+Change listeners now return a `ListenerToken` object with a `remove()` method for cleanup.
+====
+
+.Version 1.1
+[NOTE]
+====
+Live query listeners use the TurboModule typed event path on New Architecture builds. This improves listener routing and cleanup consistency across iOS and Android.
+====
+
+[discrete]
+==== Example 2. Stopping a Live Query - Change Listener
+
+[,typescript]
+----
+// Remove listener using new API
+await token.remove();
+----
+
+.Deprecated
+[CAUTION]
+====
+The `query.removeChangeListener(token)` method is deprecated. It remains available for backward compatibility, but new applications should use `token.remove()`. Existing applications are strongly encouraged to migrate.
+
+[,typescript]
+----
+// DEPRECATED
+await query.removeChangeListener(token);
+
+// RECOMMENDED
+await token.remove();
+----
+====
+
+== Query Change Data Structure
+
+When a query result changes, your callback receives a `QueryChange` object:
+
+[,typescript]
+----
+interface QueryChange {
+  error: string;      // Error message if query failed
+  query: Query;       // Reference to the query
+  results: ResultSet; // Array of result objects
+}
+----
+
+[discrete]
+==== Example 3. Complete Live Query with Error Handling
+
+[,typescript]
+----
+import { ListenerToken } from '@couchbase/couchbase-lite-react-native';
+
+const query = database.createQuery(
+  'SELECT META().id, name, email FROM _default.users WHERE isActive = true'
+);
+
+const token: ListenerToken = await query.addChangeListener((change) => {
+  if (change.error) {
+    console.error('Query error:', change.error);
+    return;
+  }
+
+  console.log(`Found ${change.results.length} active users`);
+  change.results.forEach(result => {
+    console.log(`User: ${result.name} - ${result.email}`);
+  });
+});
+
+// Remove when done
+await token.remove();
+----
+
+[discrete]
+==== Example 4. React Hook Pattern for Live Queries
+
+[,typescript]
+----
+import { useEffect, useState } from 'react';
+import { ListenerToken } from '@couchbase/couchbase-lite-react-native';
+
+function ActiveUsersScreen({ database }) {
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    if (!database) return;
+
+    let token;
+
+    const setup = async () => {
+      const query = database.createQuery(
+        'SELECT META().id, name FROM _default.users WHERE isActive = true'
+      );
+
+      token = await query.addChangeListener((change) => {
+        if (!change.error) {
+          setUsers(change.results);
+        }
+      });
+    };
+    setup();
+
+    // Cleanup on unmount
+    return () => {
+      if (token && !token.isRemoved()) {
+        token.remove();
+      }
+    };
+  }, [database]);
+
+  return (
+    // Render users list
+  );
+}
+----
+
+== Best Practices
+
+*Always Remove Listeners*
+
+In React components, use the cleanup function to prevent memory leaks:
+
+[,typescript]
+----
+useEffect(() => {
+  let token;
+
+  const setup = async () => {
+    token = await query.addChangeListener((change) => {
+      // Handle changes
+    });
+  };
+  setup();
+
+  return () => {
+    if (token && !token.isRemoved()) {
+      token.remove();
+    }
+  };
+}, [query]);
+----
+
+*Check Before Removing*
+
+[,typescript]
+----
+if (!token.isRemoved()) {
+  await token.remove();
+}
+----
