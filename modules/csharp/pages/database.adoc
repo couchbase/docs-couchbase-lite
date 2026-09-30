@@ -302,6 +302,17 @@ So a database encrypted using the C#.Net SDK, and then exported, is readable onl
 To change an existing encryption key, open the database using its existing encryption-key and use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Database.html#Couchbase_Lite_Database_ChangeEncryptionKey_Couchbase_Lite_EncryptionKey_[Database.ChangeEncryptionKey()]
 to set the required new encryption-key value.
 
+[WARNING]
+--
+This operation is not safe to interrupt.
+`Database.ChangeEncryptionKey()` updates the SQLite database and its attachments in separate steps, not as a single atomic operation.
+An interruption partway through, such as a crash, force quit, or power loss, can leave some attachments encrypted under the old key while the rest use the new one.
+SQLite's own re-key behavior under power loss has not been independently verified by Couchbase.
+
+Take a full backup of the `<databaseName>.cblite2` folder immediately before changing the encryption key -- see xref:csharp:database.adoc#lbl-backup-restore[].
+This gives you something to restore to if the process is interrupted.
+--
+
 
 [#removing]
 === Removing
@@ -330,6 +341,40 @@ Note that this sandbox gets deleted sometimes when debugging from inside Visual 
 * Android: Using the `Context` passed in the `Activate()` method, `Context.FilesDir.AbsolutePath` (database can be retrieved using adb)
 
 // end::list-only[]
+
+
+[#lbl-backup-restore]
+== Backup and Restore
+
+To back up a Couchbase{nbsp}Lite database, take a cold backup: a full filesystem copy of the `<databaseName>.cblite2` folder while the database is closed.
+
+.Back up a database
+. Close the database using `Database.Close()` -- see xref:csharp:database.adoc#close-database[] -- or make sure the running process has not opened it.
+. Copy the entire `<databaseName>.cblite2` folder, not individual files inside it, to your backup destination.
+The default location of the folder depends on the platform your app runs on -- see xref:csharp:database.adoc#lbl-find-db-loc[].
+
+.Restore a database
+. Make sure the database is closed, or that your app has not yet opened it.
+. Replace the existing `<databaseName>.cblite2` folder with the backed up copy.
+If you're restoring to a new device, copy the backed up folder into place.
+
+_Couchbase Lite on C#.Net_ has no separate backup API.
+You use the operating system's standard file copy tools.
+
+Copying the entire folder while the database is closed is the only supported backup method.
+Copying individual files, or copying the folder while the database is open, can produce a corrupt or unusable copy.
+
+A restore replaces the whole folder.
+It does not merge.
+After a restore, the database's contents are exactly what they were at the time of the backup.
+
+[WARNING]
+--
+Restoring the `<databaseName>.cblite2` folder only rewinds the database itself.
+Couchbase{nbsp}Lite has no visibility into, and does not restore, any application state your app keeps outside that folder, such as counters, cached files, preference stores, or other databases.
+If your application compares such external state against values held inside the database, for example to detect corruption, a partial restore can leave the two out of sync.
+--
+
 
 
 [#lbl-db-util]
