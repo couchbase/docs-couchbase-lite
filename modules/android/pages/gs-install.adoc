@@ -25,7 +25,7 @@ _Abstract -- Getting you up and running quickly with Couchbase Lite on android_ 
 Couchbase Lite on Android supports the development of applications in Java or xref:android:kotlin.adoc[Kotlin].
 
 You can install Couchbase Lite Community and-or Enterprise editions from the Maven repository.
-There are separate downloads for Kotlin and Java.
+There's separate downloads for Kotlin and Java.
 
 Enterprise users can also download the Couchbase Lite Vector Search extension library.
 Installation instructions are included in the step-by-step install guides for both Java and Kotlin.
@@ -49,7 +49,7 @@ Kotlin - Enterprise::
 .. If you want to use Vector Search, add the Couchbase Lite Vector Search dependency for architectures other than `x86_64`: `com.couchbase.lite:couchbase-lite-java-vector-search-arm64-{vs-major}.{vs-minor}.{vs-maintenance-android}{empty}`
 ... For `x86_64` architectures: `com.couchbase.lite:couchbase-lite-android-vector-search-x86_64-{vs-major}.{vs-minor}.{vs-maintenance-android}{empty}`
 .. You must then use `CouchbaseLite.enableVectorSearch();` to enable the vector search extension.
-. Build the project and it will pull Couchbase Lite down.
+. Build the project and it pulls Couchbase Lite down.
 --
 
 Kotlin - Community::
@@ -59,7 +59,7 @@ Kotlin - Community::
 . Add Couchbase Lite as a dependency in your app-level `build.gradle` +
 `implementation 'com.couchbase.lite:couchbase-lite-android-ktx:{major}.{minor}.{maintenance-android}{empty}'`
 . Check you have `mavenCentral()` in `repositories` (or in `settings.gradle`)
-. Build the project and it will pull Couchbase Lite down.
+. Build the project and it pulls Couchbase Lite down.
 --
 
 Java - Enterprise::
@@ -73,7 +73,7 @@ Java - Enterprise::
 .. If you want to use Vector Search, add the Couchbase Lite Vector Search dependency for architectures other than `x86_64`: `com.couchbase.lite:couchbase-lite-java-vector-search-arm64-{vs-major}.{vs-minor}.{vs-maintenance-android}{empty}`
 ... For `x86_64` architectures: `com.couchbase.lite:couchbase-lite-android-vector-search-x86_64-{vs-major}.{vs-minor}.{vs-maintenance-android}{empty}`
 .. You must then use `CouchbaseLite.enableVectorSearch();` to enable the vector search extension.
-. Build the project and it will pull Couchbase Lite down.
+. Build the project and it pulls Couchbase Lite down.
 --
 
 Java - Community::
@@ -83,15 +83,14 @@ Java - Community::
 . Add Couchbase Lite as a dependency in your app-level `build.gradle` +
 `implementation 'com.couchbase.lite:couchbase-lite-android:{major}.{minor}.{maintenance-android}{empty}'`
 . Check you have `mavenCentral()` in `repositories` (or in `settings.gradle`)
-. Build the project and it will pull Couchbase Lite down.
+. Build the project and it pulls Couchbase Lite down.
 --
 
 =====
 
-That's it!
 You're all set to begin developing powerful Couchbase Lite applications.
 
-Now, try the xref:android:gs-build.adoc[Getting Started] application, which demonstrates use of key CRUD functionality.
+Now write your first code in the xref:android:gs-five-minutes.adoc[Quick Start], or read the annotated xref:android:gs-build.adoc[Getting Started App], which demonstrates use of key Create, Read, Update and Delete functionality.
 ****
 
 
@@ -140,7 +139,7 @@ Community Edition::
 +
 --
 
-. Ensure your `repositories` section includes `mavencentral()`
+. Ensure your `repositories` section includes `mavenCentral()`
 +
 [source,kotlin, subs="attributes+"]
 ----
@@ -284,7 +283,7 @@ Community::
 +
 --
 
-. Ensure your `repositories` section includes `mavencentral()`
+. Ensure your `repositories` section includes `mavenCentral()`
 +
 [source,groovy, subs="attributes+"]
 ----
@@ -369,7 +368,7 @@ dependencies {
 
   implementation 'com.couchbase.lite:couchbase-lite-android-ee-ktx:{major}.{minor}.{maintenance-android}{empty}'
 
-  implementation 'com.couchbase.lite:couchbase-lite-android-vector-search-x86_64-1.0.0-{vs-major}.{vs-minor}.{vs-maintenance-android}{empty}'
+  implementation 'com.couchbase.lite:couchbase-lite-android-vector-search-x86_64-{vs-major}.{vs-minor}.{vs-maintenance-android}{empty}'
 
 //   ... other section content as required by user
 }
@@ -383,6 +382,36 @@ include::java:example$snippets/common/main/java/com/couchbase/codesnippets/Vecto
 ----
 
 
+[#minification]
+== Minification
+
+An application that enables minification must ensure that certain pieces of Couchbase{nbsp}Lite library code are not changed.
+See <<ruleset>> for a near-minimal rule set that retains the code Couchbase{nbsp}Lite needs.
+
+[#ruleset]
+.Ruleset
+====
+[source, Kotlin]
+----
+-keep class com.couchbase.lite.ConnectionStatus { <init>(...); }
+-keep class com.couchbase.lite.LiteCoreException { static <methods>; }
+-keep class com.couchbase.lite.internal.replicator.CBLTrustManager {
+    public java.util.List checkServerTrusted(java.security.cert.X509Certificate[], java.lang.String, java.lang.String);
+}
+-keep class com.couchbase.lite.internal.ReplicationCollection {
+    static <methods>;
+    <fields>;
+}
+-keep class com.couchbase.lite.internal.core.C4* {
+    static <methods>;
+    <fields>;
+    <init>(...);
+ }
+----
+
+====
+
+
 [#related-content]
 == Related Content
 ++++
@@ -394,7 +423,9 @@ include::java:example$snippets/common/main/java/com/couchbase/codesnippets/Vecto
 .How to . . .
 * xref:android:gs-prereqs.adoc[Prerequisites]
 * xref:android:gs-install.adoc[Install]
-* xref:android:gs-build.adoc[Build and Run]
+* xref:android:gs-five-minutes.adoc[Quick Start]
+* xref:android:tutorial-cloud-sync.adoc[Add Cloud Sync]
+* xref:android:gs-build.adoc[Getting Started App]
 
 
 .
