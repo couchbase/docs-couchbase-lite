@@ -1,4 +1,3 @@
-
 = Build and Run
 :page-aliases: start/java-gs-build.adoc
 :page-role:
@@ -16,7 +15,7 @@
 [abstract]
 --
 Description -- _{description}_ +
-_Abstract -- This content provides sample code and instructions that enable you to test your Couchbase Lite for java installation._ +
+_Abstract -- This content provides sample code and instructions that enable you to test your Couchbase Lite for Java installation._ +
 Related Content -- xref:java:gs-install.adoc[Install] | xref:java:gs-prereqs.adoc[Prerequisites] | xref:java:gs-build.adoc[Build and Run] |
 --
 // include::ROOT:partial$block-related-get-started.adoc[]
@@ -25,11 +24,12 @@ Related Content -- xref:java:gs-install.adoc[Install] | xref:java:gs-prereqs.ado
 [#build-a-getting-started-app]
 == Build a Getting Started App
 
-This section explains how to validate your configured build environment by building a starter app that uses many of Couchbase{nbsp}Lite's more common features.
+This section explains how to validate your configured build environment by building a starter app that uses common Couchbase{nbsp}Lite features.
 
 // TIP: The GettingStarted app can be downloaded from GitHub link:https://github.com/ibsoln/cblGettingStarted.git[GettingStarted].
 
-The GettingStarted app demonstrates how to use Couchbase{nbsp}Lite. Console and Web App versions are available.
+The GettingStarted app demonstrates how to use Couchbase{nbsp}Lite.
+Console and Web App versions are available.
 
 .Development-type Scenarios
 [tabs]
@@ -39,9 +39,9 @@ Desktop App::
 +
 --
 
-TIP: Ensure you added the Couchbase{nbsp}Lite dependency to your `build.gradle` file
+TIP: Make sure you added the Couchbase{nbsp}Lite dependency to your `build.gradle` file
 
-Create, build and run a new project using the following `GettingStarted.java` code:
+Create, build, and run a new project using the following `GettingStarted.java` code:
 
 
 [source,java]
@@ -56,13 +56,14 @@ include::example$GetStartedDesktop/src/main/java/com/couchbase/gettingstarted/Ma
 <.> Retrieve document and log its ID
 <.> Retrieve the document as mutable and change the `language` to `Kotlin` and save it
 <.> Query the database output count and id to log
-<.> Optionally, initiate a replication
+<.> Optionally, start a replication
 
-On running the app, you should see the document ID and property printed to the console together with a query result showing the number of rows in the database.
+When you run the app, the console displays the document ID and property.
+It also displays a query result showing the number of rows in the database.
 
-This shows the document was successfully persisted to the database.
+This shows that the app persisted the document to the database.
 
-See <<About the Getting Started App>> for more on the app itself
+See <<about-the-getting-started-app>> for more on the app itself.
 
 --
 
@@ -70,7 +71,7 @@ Web App::
 +
 --
 
-This section explains how to set-up a build project to create Couchbase{nbsp}Lite web apps using gradle and Intellij IDEA.
+This section explains how to configure a build project to create Couchbase{nbsp}Lite web apps using Gradle and IntelliJ IDEA.
 
 *Steps*
 
@@ -81,76 +82,70 @@ This section explains how to set-up a build project to create Couchbase{nbsp}Lit
 include::example$GetStartedWS/build.gradle.sample
 ----
 
-. Within Intellij IDEA, open the new project folder
+. Within IntelliJ IDEA, open the new project folder.
 +
-If you don't have auto-import enabled, then accept the *Import from Gradle* prompt that appears at the bottom right of the screen.
-. Create a Java class _DBManager_ using this code:
+If you do not have auto-import enabled, accept the *Import from Gradle* prompt.
+. Create a Java class `DBManager` using this code:
 +
 [source, java]
 ----
 include::example$GetStartedWS/src/main/java/com/couchbase/gettingstarted/DBManager.java[tags=getting-started,indent=0]
 ----
 
-. Create a Servlet similar to the one found in the example GettingStartedServlet
+. Create a Servlet similar to the one found in the example `GettingStartedServlet`.
 +
-. Create an `index.html` file in `src/main/web app` with the following content:
+. Create an `index.html` file in `src/main/webapp` with the following content:
 +
 [source, html]
 ----
 include::example$GetStartedWS/src/main/webapp/index.html
 ----
 
-. Create a `showDbItems.jsp` file in `src/main/web app` with the following content:
+. Create a `showDbItems.jsp` file in `src/main/webapp` with the following content:
 +
 [source, html]
 ----
 include::example$GetStartedWS/src/main/webapp/showDbItems.jsp
 ----
 
-. Build, deploy and run the app using `jettyRun`
+. Build, deploy, and run the app using `jettyRun`
 +
 // !!!GBM: THIS IMAGE PROBABLY NEEDS UPDATING
 image::java:GradleMenuWebApp.png[,300]
 
-.. Point your browser to: `localhost:8080/'
+.. Point your browser to: `localhost:8080/`
 +
-This opens the browser at your index.html page.
+This opens the browser at your `index.html` page.
 ..  Select the *here* link
 +
-This launches the servlet and displays the results in `showdDbItems.jsp`.
-
---
-
-
-// !!!GBM: I DON"T THINK THIS SHOULD BE A TAB
-// It seems like it ought to be just text under the tabbed section.
-
-+
-About the Starter App::
-+
---
-
-anchor:bmkAboutGettingStarted[]
-The GettingStarted app will:
-
-* Create a database
-+
-The app creates its database in the `/getting-started.cblite2` directory relative to its root location when run (See: xref:java:database.adoc#lbl-find-db-loc[Finding a Database File]).
-
-TIP: Explicitly state your required database location when creating your database (see: xref:java:database.adoc#lbl-find-db-loc[Finding a Database File] for how to do this)
-
-* Add content to the DB
-* Run a simple query counting the DB rows
-* Start a one-shot, bi-directional replication using _Sync{nbsp}Gateway and _Couchbase{nbsp}Server_
-* Produce a simple report on the db Contents
-+
-// !!!GBM: THIS IMAGE PROBABLY NEEDS UPDATING
-image::java:cblOutput.png[,400]
-
-NOTE: Before starting your app ensure you have started both your _Couchbase{nbsp}Server_ and _Sync{nbsp}Gateway instances.
+This launches the servlet and displays the results in `showDbItems.jsp`.
 
 --
 
 ====
 
 
+[#about-the-getting-started-app]
+== About the Getting Started App
+
+// Legacy anchor kept so any existing links to #bmkAboutGettingStarted still resolve.
+anchor:bmkAboutGettingStarted[]
+The GettingStarted app does the following:
+
+* Create a database
++
+The app creates its database in the `/getting-started.cblite2` directory relative to its root location when run.
+See xref:java:database.adoc#lbl-find-db-loc[Finding a Database File].
++
+TIP: Explicitly state your required database location when creating your database.
+For more information, see xref:java:database.adoc#lbl-find-db-loc[Finding a Database File].
+
+* Add content to the DB
+* Run a query counting the DB rows
+* Start a one-shot, bidirectional replication using Sync{nbsp}Gateway and Couchbase{nbsp}Server
+* Produce a report on the DB contents
++
+// !!!GBM: THIS IMAGE PROBABLY NEEDS UPDATING
+image::java:cblOutput.png[,400]
+
+NOTE: Before starting your app, make sure you have started both your Couchbase{nbsp}Server and Sync{nbsp}Gateway instances.
