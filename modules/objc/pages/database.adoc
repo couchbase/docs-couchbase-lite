@@ -296,6 +296,17 @@ So a database encrypted using the Objective-C SDK, and then exported, is readabl
 To change an existing encryption key, open the database using its existing encryption-key and use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(im)changeEncryptionKey:error:[CBLDatabase.changeEncryptionKey()]
 to set the required new encryption-key value.
 
+[WARNING]
+--
+This operation is not safe to interrupt.
+`CBLDatabase.changeEncryptionKey()` updates the SQLite database and its attachments in separate steps, not as a single atomic operation.
+An interruption partway through, such as a crash, force quit, or power loss, can leave some attachments encrypted under the old key while the rest use the new one.
+SQLite's own re-key behavior under power loss has not been independently verified by Couchbase.
+
+Take a full backup of the `<databaseName>.cblite2` folder immediately before changing the encryption key -- see xref:objc:database.adoc#lbl-backup-restore[].
+This gives you something to restore to if the process is interrupted.
+--
+
 
 [#removing]
 === Removing
@@ -313,6 +324,40 @@ To upgrade an encrypted database see: xref:objc:dep-upgrade.adoc#lbl-db-upgrades
 
 
 When the application is running on the iOS simulator, you can locate the application's sandbox directory using the https://simpholders.com/3/[SimPholders] utility.
+
+
+[#lbl-backup-restore]
+== Backup and Restore
+
+To back up a Couchbase{nbsp}Lite database, take a cold backup: a full filesystem copy of the `<databaseName>.cblite2` folder while the database is closed.
+
+.Back up a database
+. Close the database using `CBLDatabase.close()` -- see xref:objc:database.adoc#close-database[] -- or make sure the running process has not opened it.
+. Copy the entire `<databaseName>.cblite2` folder, not individual files inside it, to your backup destination.
+By default, the folder is in the application sandbox -- see xref:objc:database.adoc#lbl-find-db-loc[].
+
+.Restore a database
+. Make sure the database is closed, or that your app has not yet opened it.
+. Replace the existing `<databaseName>.cblite2` folder with the backed up copy.
+If you're restoring to a new device, copy the backed up folder into place.
+
+_Couchbase Lite on Objective-C_ has no separate backup API.
+You use the operating system's standard file copy tools.
+
+Copying the entire folder while the database is closed is the only supported backup method.
+Copying individual files, or copying the folder while the database is open, can produce a corrupt or unusable copy.
+
+A restore replaces the whole folder.
+It does not merge.
+After a restore, the database's contents are exactly what they were at the time of the backup.
+
+[WARNING]
+--
+Restoring the `<databaseName>.cblite2` folder only rewinds the database itself.
+Couchbase{nbsp}Lite has no visibility into, and does not restore, any application state your app keeps outside that folder, such as counters, cached files, preference stores, or other databases.
+If your application compares such external state against values held inside the database, for example to detect corruption, a partial restore can leave the two out of sync.
+--
+
 
 
 [#lbl-db-util]
