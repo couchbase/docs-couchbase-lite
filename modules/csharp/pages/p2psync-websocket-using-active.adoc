@@ -1,4 +1,3 @@
-
 = Active Peer
 :page-aliases: advance/csharp-p2psync-websocket-using-active.adoc
 ifdef::show_edition[:page-edition: Enterprise Edition]
@@ -62,14 +61,14 @@ include::csharp:example$code_snippets/Program.cs[tags="p2p-act-rep-func;!autopur
 ----
 ====
 
+<.> Configure how the replication should perform <<conflict-resolution>>.
+
 <.> Configure how the client will authenticate the server.
 Here we say connect only to servers presenting a self-signed certificate.
 By default, clients accept only servers presenting certificates that can be verified using the OS bundled Root CA Certificates -- see: <<authenticate-listener>>.
 
 <.> Configure the credentials the client will present to the server.
 Here we say to provide _Basic Authentication_ credentials. Other options are available -- see: <<configuring-client-authentication>>.
-
-<.> Configure how the replication should perform <<conflict-resolution>>.
 
 <.> Initialize the replicator using your configuration object.
 
@@ -102,7 +101,6 @@ In this section::
 [#lbl-cfg-tgt]
 === Configure Target
 
-Use the
 Initialize and define the replication configuration with local and remote database locations using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorConfiguration.html[ReplicatorConfiguration] object.
 
 The constructor provides:
@@ -160,9 +158,18 @@ We use `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empt
 ====
 
 
+// Program.cs has no tag that sets ReplicatorType or Continuous, so this example is inline.
+// include ::csharp:example$code_snippets/Program.cs[tags="p2p-act-rep-config-type;p2p-act-rep-config-cont", indent=0]
 [source, C#]
 ----
-include::csharp:example$code_snippets/Program.cs[tags="p2p-act-rep-config-type;p2p-act-rep-config-cont", indent=0]
+var replConfig = new ReplicatorConfiguration(collectionConfig, url)
+{
+    // Set replicator type
+    ReplicatorType = ReplicatorType.PushAndPull,
+
+    // Configure Sync Mode
+    Continuous = true
+};
 ----
 ====
 
@@ -187,7 +194,7 @@ In the event it detects a transient error, the replicator will attempt to reconn
 
 On each retry the interval between attempts is increased exponentially (exponential backoff) up to the maximum wait time limit (5 minutes).
 
-The REST API provides configurable control over this replication retry logic using a set of configiurable properties -- see: <<tbl-repl-retry>>.
+The REST API provides configurable control over this replication retry logic using a set of configurable properties -- see: <<tbl-repl-retry>>.
 
 .Replication Retry Configuration Properties
 [#tbl-repl-retry,cols="2,3,5"]
@@ -209,14 +216,14 @@ Default: The replicator pings the listener every 300 seconds.
 a| The maximum number of retry attempts
 
 * Set to zero (0) to use default values
-* Set to zero (1) to prevent any retry attempt
+* Set to one (1) to prevent any retry attempt
 * The retry attempt count is reset when the replicator is able to connect and replicate
 * Default values are:
 ** Single-shot replication = 9;
 ** Continuous replication = maximum integer value
 * Negative values generate a Couchbase exception `InvalidArgumentException`
 
-|https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorConfiguration.html#Couchbase_Lite_Sync_ReplicatorConfiguration_MaxAttemptWaitTime[MaxAttemptWaitTime()]
+|https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorConfiguration.html#Couchbase_Lite_Sync_ReplicatorConfiguration_MaxAttemptsWaitTime[MaxAttemptsWaitTime()]
 |Change this to adjust the interval between retries.
 a|The maximum interval between retry attempts
 
@@ -247,13 +254,13 @@ include::csharp:example$code_snippets/Program.cs[tags="replication-retry-config"
 
 <.> Here we use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorConfiguration.html#Couchbase_Lite_Sync_ReplicatorConfiguration_Heartbeat[Heartbeat()] to set the required interval (in seconds) between the heartbeat pulses
 <.> Here we use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorConfiguration.html#Couchbase_Lite_Sync_ReplicatorConfiguration_MaxAttempts[MaxAttempts()] to set the required number of retry attempts
-<.> Here we use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorConfiguration.html#Couchbase_Lite_Sync_ReplicatorConfiguration_MaxAttemptWaitTime[MaxAttemptWaitTime()] to set the required interval between retry attempts.
+<.> Here we use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorConfiguration.html#Couchbase_Lite_Sync_ReplicatorConfiguration_MaxAttemptsWaitTime[MaxAttemptsWaitTime()] to set the required interval between retry attempts.
 
 
 [#authenticate-listener]
 === Authenticating the Listener
 
-Define the credentials the your app (the client) is expecting to receive from the server (listener) in order to ensure that the server is one it is prepared to interact with.
+Define the credentials your app (the client) is expecting to receive from the server (listener) in order to ensure that the server is one it is prepared to interact with.
 
 Note that the client cannot authenticate the server if TLS is turned off.
 When TLS is enabled (Sync Gateway's default) the client _must_ authenticate the server.
@@ -276,9 +283,14 @@ CA Cert::
 --
 Set the client to expect and accept only CA attested certificates.
 
+// The p2p-act-rep-config-cacert tag in Program.cs contains only a comment, so this example is inline.
 [source, C#]
 ----
-include::csharp:example$code_snippets/Program.cs[tags=p2p-act-rep-config-cacert, indent=0]
+var replConfig = new ReplicatorConfiguration(collectionConfig, url)
+{
+    // Configure Server Security -- only accept CA certs
+    AcceptOnlySelfSignedServerCertificate = false // <.>
+};
 ----
 <.> This is the default.
 Only certificate chains with roots signed by a trusted CA are allowed.
@@ -308,7 +320,7 @@ Set the client to expect and accept only a pinned certificate.
 
 [source, C#]
 ----
-include::csharp:example$code_snippets/Program.cs[tag=p2p-act-rep-config-cacert-pinned, indent=0]
+include::csharp:example$code_snippets/Program.cs[tag=certificate-pinning, indent=0]
 ----
 --
 
@@ -328,7 +340,7 @@ We use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty
 
 [#basic-authentication]
 === Basic Authentication
-Use the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.BasicAuthenticator.html[BasicAuthenticator]` to supply basic authentication credentials (username and word).
+Use the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.BasicAuthenticator.html[BasicAuthenticator]` to supply basic authentication credentials (username and password).
 
 // Example 5
 
@@ -418,7 +430,7 @@ This enables you to know, for example, when the replication is actively transfer
 [#lbl-repl-chng]
 === Change Listeners
 Use this to monitor changes and to inform on sync progress; this is an optional step.
-You can add and a replicator change listener at any point; it will report changes from the point it is registered.
+You can add a replicator change listener at any point; it will report changes from the point it is registered.
 
 .Best Practice
 TIP: Don't forget to save the token so you can remove the listener later
@@ -460,17 +472,24 @@ Adding a Change Listener::
 --
 [source, C#]
 ----
-include::csharp:example$code_snippets/Program.cs[tags=p2p-act-rep-add-change-listener;!p2p-act-rep-add-change-listener-label,indent=0]
+include::csharp:example$code_snippets/Program.cs[tags=p2p-act-rep-add-change-listener,indent=0]
 ----
+<.> Add a change listener and save the returned token, so you can remove the listener later.
 --
 +
 
 Using replicator.status::
 +
 --
+// The p2p-act-rep-status tag in Program.cs is empty, so this example is inline.
 [source, C#]
 ----
-include::csharp:example$code_snippets/Program.cs[tags=p2p-act-rep-status,indent=0]
+var status = replicator.Status;
+Console.WriteLine($"Activity: {status.Activity}");
+Console.WriteLine($"Progress: {status.Progress.Completed} of {status.Progress.Total}");
+if (status.Error != null) {
+    Console.WriteLine($"Error: {status.Error}");
+}
 ----
 --
 ======
@@ -568,9 +587,11 @@ You can find further information on database operations in xref:csharp:database.
 ====
 
 
+// The p2p-act-rep-stop tag in Program.cs contains only a comment, so this example is inline.
 [source, C#]
 ----
-include::csharp:example$code_snippets/Program.cs[tags="p2p-act-rep-stop", indent=0]
+// Stop replication
+replicator.Stop(); // <.>
 ----
 ====
 
@@ -584,7 +605,7 @@ It will stop any active <<lbl-repl-chng,change listener>> once the replication i
 Unless you specify otherwise, Couchbase Lite 4.x uses Last Write Wins (LWW) conflict resolution by default during replication.
 When conflicts occur during pull replication, the change with the latest timestamp wins.
 Timestamps are local to each device.
-See xref:objc:conflict.adoc[Handling Data Conflicts].
+See xref:csharp:conflict.adoc[Handling Data Conflicts].
 
 
 To use a different policy, specify a _conflict resolver_ using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorConfiguration.html#Couchbase_Lite_Sync_ReplicatorConfiguration_ConflictResolver[ConflictResolver] as shown in <<using-conflict-resolvers>>.
@@ -704,5 +725,3 @@ xref:tutorials:cbl-p2p-sync-websockets:swift/cbl-p2p-sync-websockets.adoc[Gettin
 ++++
 
 // include::ROOT:partial$block-caveats.adoc[tag=enterprise-only]
-
-
